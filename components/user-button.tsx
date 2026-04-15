@@ -11,12 +11,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Loader2, LogOut, User, UserCircle } from "lucide-react";
+import { Loader2, LogOut, User, UserCircle, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function UserButton() {
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  const handleAboutClick = () => {
+    router.push("/about");
+  };
 
   if (status === "loading") {
     return (
@@ -90,6 +94,13 @@ export function UserButton() {
         >
           <User className="mr-2 h-4 w-4" />
           Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={handleAboutClick}
+          className="cursor-pointer flex items-center p-3 text-sm transition-colors hover:bg-primary hover:text-primary-foreground rounded-md"
+        >
+          <Info className="mr-2 h-4 w-4" />
+          About
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => signOut()}

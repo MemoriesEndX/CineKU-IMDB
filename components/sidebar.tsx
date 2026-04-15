@@ -1,296 +1,217 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
-  Home,
   Compass,
   Film,
-  Library,
-  Info,
-  Menu,
-  X,
-  Github,
-  Twitter,
-  Instagram,
-  Mail,
   HelpCircle,
-  Facebook,
+  Home,
+  Library,
+  Settings,
   Tv,
-  HeadphonesIcon,
   Tv2Icon,
 } from "lucide-react";
+import { NavIcon } from "./ui/NavIcon";
 import { SupportDialog } from "./support-dialog";
-import { useSession } from "next-auth/react";
+import { cn } from "@/lib/utils";
 
-const routes = [
+type RouteItem = {
+  label: string;
+  href: string;
+  icon: typeof Home;
+  match?: (pathname: string) => boolean;
+};
+
+const routes: RouteItem[] = [
   {
     label: "Home",
     icon: Home,
     href: "/",
-    color: "from-pink-500 to-rose-500",
+    match: (pathname) => pathname === "/",
   },
   {
     label: "Discover",
     icon: Compass,
     href: "/discover",
-    color: "from-purple-500 to-indigo-500",
+    match: (pathname) => pathname === "/discover" || pathname.startsWith("/discover/"),
   },
   {
     label: "Movies",
     icon: Film,
     href: "/movies",
-    color: "from-blue-500 to-cyan-500",
+    match: (pathname) => pathname === "/movies" || pathname.startsWith("/movie/"),
   },
   {
     label: "TV Shows",
     icon: Tv,
     href: "/tv",
-    color: "from-purple-500 to-cyan-500",
+    match: (pathname) => pathname === "/tv" || pathname.startsWith("/tv/"),
   },
   {
     label: "Anime",
     icon: Tv2Icon,
     href: "/anime",
-    color: "from-pink-500 to-pink-300",
+    match: (pathname) => pathname === "/anime" || pathname.startsWith("/anime/"),
   },
   {
-    label: "Library",
-    icon: Library,
-    href: "/library",
-    color: "from-emerald-500 to-green-500",
-  },
-  {
-    label: "About",
-    icon: Info,
-    href: "/about",
-    color: "from-amber-500 to-yellow-500",
+    label: "Settings",
+    icon: Settings,
+    href: "/settings",
+    match: (pathname) => pathname === "/settings",
   },
 ];
 
-const socialLinks = [
-  {
-    label: "GitHub",
-    icon: Github,
-    href: "https://github.com/amineguezmir",
-    color: "from-gray-600 to-gray-400",
-  },
-  {
-    label: "Twitter",
-    icon: Facebook,
-    href: "https://www.facebook.com/profile.php?id=100010802672227",
-    color: "from-blue-400 to-blue-600",
-  },
-  {
-    label: "Instagram",
-    icon: Instagram,
-    href: "https://www.instagram.com/guezmiramine/",
-    color: "from-pink-500 to-purple-500",
-  },
-  {
-    label: "Gmail",
-    icon: Mail,
-    href: "guezmiramine1@gmail.com",
-    color: "from-red-500 to-orange-500",
-  },
-];
+const mobileRoutes = routes;
+
+function isRouteActive(pathname: string, route: RouteItem) {
+  return route.match ? route.match(pathname) : pathname === route.href;
+}
+
+interface DesktopSidebarProps {
+  pathname: string;
+  greetingText: string;
+  onNavigate: (href: string) => void;
+  onSupportClick: () => void;
+}
+
+interface BottomActionsProps {
+  pathname: string;
+  greetingText: string;
+  onNavigate: (href: string) => void;
+  onSupportClick: () => void;
+}
+
+function BottomActions({
+  pathname,
+  greetingText,
+  onNavigate,
+  onSupportClick,
+}: BottomActionsProps) {
+  return (
+    <div className="relative z-10 flex flex-col items-center gap-1.5 border-t border-white/5 pt-1.5">
+      <NavIcon
+        icon={Library}
+        label="Library"
+        variant="sidebar"
+        active={pathname === "/library"}
+        onClick={() => onNavigate("/library")}
+      />
+      <NavIcon
+        icon={HelpCircle}
+        label="Support"
+        variant="sidebar"
+        active={false}
+        showIndicator={false}
+        onClick={onSupportClick}
+      />
+      <p className="mt-1 px-1.5 text-center text-[8px] leading-3 text-zinc-400 lg:text-[8.5px]">
+        {greetingText}
+      </p>
+    </div>
+  );
+}
+
+function DesktopSidebar({
+  pathname,
+  greetingText,
+  onNavigate,
+  onSupportClick,
+}: DesktopSidebarProps) {
+  return (
+    <aside className="fixed left-4 top-1/2 -translate-y-1/2 z-40 hidden w-[72px] flex-col overflow-hidden rounded-[2.5rem] border border-white/5 bg-black/30 p-1.5 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-2xl md:flex lg:left-6">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.02] via-transparent to-transparent rounded-[2.5rem]" />
+
+      <button
+        type="button"
+        onClick={() => onNavigate("/")}
+        aria-label="Go to home"
+        className="relative z-10 mb-1 flex h-10 w-10 items-center justify-center self-center overflow-hidden rounded-2xl border border-white/5 bg-white/[0.04] transition-transform duration-300 hover:scale-105 hover:bg-white/[0.06]"
+      >
+        <img
+          src={`/movie.png`}
+          alt="CineKU Logo"
+          className="h-6 w-6 object-contain"
+        />
+      </button>
+
+      <nav className="relative z-10 flex flex-col items-center gap-1.5 py-2">
+        {routes.map((route) => (
+          <NavIcon
+            key={route.href}
+            icon={route.icon}
+            label={route.label}
+            variant="sidebar"
+            active={isRouteActive(pathname, route)}
+            onClick={() => onNavigate(route.href)}
+          />
+        ))}
+      </nav>
+
+      <BottomActions
+        pathname={pathname}
+        greetingText={greetingText}
+        onNavigate={onNavigate}
+        onSupportClick={onSupportClick}
+      />
+    </aside>
+  );
+}
+
+interface MobileBottomNavProps {
+  pathname: string;
+  onNavigate: (href: string) => void;
+}
+
+function MobileBottomNav({ pathname, onNavigate }: MobileBottomNavProps) {
+  return (
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 md:hidden">
+      <div className="mx-auto w-fit px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
+        <nav className={cn("pointer-events-auto flex items-center gap-1 rounded-full border border-white/5", "bg-black/30 px-2 py-2 shadow-[0_20px_60px_rgba(0,0,0,0.45)] shadow-black/40 backdrop-blur-2xl") }>
+          {mobileRoutes.map((route) => (
+            <NavIcon
+              key={route.href}
+              icon={route.icon}
+              label={route.label}
+              variant="bottom"
+              active={isRouteActive(pathname, route)}
+              onClick={() => onNavigate(route.href)}
+            />
+          ))}
+        </nav>
+      </div>
+    </div>
+  );
+}
 
 export function Sidebar() {
-  const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-  const [showSupport, setShowSupport] = useState(false);
+  const pathname = usePathname() || "/";
+  const router = useRouter();
   const { data: session } = useSession();
+  const [showSupport, setShowSupport] = useState(false);
 
-  useEffect(() => {
-    const checkScreenSize = () => {
-      const mobile = window.innerWidth < 1024;
-      setIsMobile(mobile);
-    };
+  const greetingText = useMemo(() => {
+    const firstName = session?.user?.name?.split(" ")[0];
+    return firstName ? `Hi, ${firstName}!` : "Need Help?";
+  }, [session?.user?.name]);
 
-    checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
-    return () => window.removeEventListener("resize", checkScreenSize);
-  }, []);
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+  const handleNavigate = (href: string) => {
+    router.push(href);
   };
 
   return (
     <>
-      <div
-        className={cn(
-          "flex flex-col h-full bg-black/90 backdrop-blur-md border-r border-r-zinc-800/50",
-          "transition-all duration-300 ease-in-out flex-shrink-0",
-          isMobile && !isOpen ? "w-0" : "",
-          isMobile && isOpen ? "w-[220px]" : "",
-          !isMobile && isOpen ? "w-[240px]" : "",
-          !isMobile && !isOpen ? "w-[80px]" : "",
-          "z-10"
-        )}
-      >
-        <div className="flex items-center justify-between p-4">
-          <div
-            className={cn(
-              "overflow-hidden transition-opacity duration-200",
-              !isOpen && "invisible opacity-0",
-              isOpen && "visible opacity-100"
-            )}
-          >
-            <Link href="/" className="flex items-center gap-x-2">
-              <div className="relative w-8 h-8">
-                <div
-                  className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 animate-pulse"
-                  style={{ animationDuration: "3s" }}
-                ></div>
-                <div className="absolute inset-0.5 rounded-full bg-black/90 flex items-center justify-center">
-                  <Film className="h-4 w-4 text-blue-400" />
-                </div>
-              </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">
-                CINE<span className="text-white">FEVER</span>
-              </h1>
-            </Link>
-          </div>
-
-          <button
-            onClick={toggleSidebar}
-            className="p-2 rounded-full hover:bg-zinc-800/80 transition-colors"
-          >
-            {isOpen ? (
-              <X size={20} className="text-zinc-400" />
-            ) : (
-              <Menu size={20} className="text-zinc-400" />
-            )}
-          </button>
-        </div>
-
-        <ScrollArea className="flex-1 px-3 py-4">
-          <div className="space-y-2">
-            {routes.map((route) => {
-              const isActive = pathname === route.href;
-
-              return (
-                <Link
-                  key={route.href}
-                  href={route.href}
-                  className={cn(
-                    "group block relative rounded-xl transition-all duration-200 hover:shadow-lg",
-                    isActive && "shadow-md"
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "relative flex items-center p-3 transition-all duration-200",
-                      isActive
-                        ? "bg-zinc-800/80 text-white"
-                        : "text-zinc-400 hover:text-white hover:bg-zinc-800/50",
-                      "rounded-xl group-hover:shadow-inner"
-                    )}
-                  >
-                    {isActive && (
-                      <div
-                        className={cn(
-                          "absolute left-0 top-0 bottom-0 w-1 rounded-full bg-gradient-to-b",
-                          route.color
-                        )}
-                      />
-                    )}
-
-                    <div
-                      className={cn(
-                        "flex items-center justify-center w-10 h-10 rounded-full transition-transform duration-200",
-                        isActive
-                          ? `bg-gradient-to-br ${route.color}`
-                          : "bg-zinc-800/80",
-                        "group-hover:scale-110"
-                      )}
-                    >
-                      <route.icon
-                        className={cn(
-                          "h-5 w-5 transition-transform duration-200",
-                          isActive ? "text-white" : "text-zinc-400",
-                          "group-hover:scale-110"
-                        )}
-                      />
-                    </div>
-
-                    <span
-                      className={cn(
-                        "ml-3 font-medium transition-all duration-200",
-                        isActive ? "text-white" : "text-zinc-400",
-                        !isOpen && "opacity-0 invisible w-0",
-                        isOpen && "opacity-100 visible w-auto"
-                      )}
-                    >
-                      {route.label}
-                    </span>
-
-                    {isActive && isOpen && (
-                      <div className="absolute right-3 h-2 w-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600" />
-                    )}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </ScrollArea>
-
-        <div className="p-4 mt-auto border-t border-zinc-800/50">
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={() => setShowSupport(true)}
-              className="group flex items-center gap-2 px-2 py-3 rounded-xl hover:bg-zinc-800/50 transition-all duration-200"
-            >
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-zinc-800/80 group-hover:bg-gradient-to-br from-violet-500 to-fuchsia-500 transition-all duration-200">
-                <HelpCircle className="h-5 w-5 text-zinc-400 group-hover:text-white group-hover:scale-110 transition-all duration-200" />
-              </div>
-              {isOpen && (
-                <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">
-                  {session?.user
-                    ? `Hi, ${session.user.name?.split(" ")[0]}!`
-                    : "Need Help?"}
-                </span>
-              )}
-            </button>
-
-            {isOpen && (
-              <div className="grid grid-cols-4 gap-2 pt-2">
-                {socialLinks.map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center justify-center"
-                    aria-label={`Visit our ${social.label}`}
-                  >
-                    <div
-                      className={cn(
-                        "flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200",
-                        "bg-zinc-800/80 hover:bg-gradient-to-br hover:scale-110",
-                        social.color
-                      )}
-                    >
-                      <social.icon className="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" />
-                    </div>
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <SupportDialog
-        open={showSupport}
-        onOpenChange={setShowSupport}
-        user={session?.user}
+      <DesktopSidebar
+        pathname={pathname}
+        greetingText={greetingText}
+        onNavigate={handleNavigate}
+        onSupportClick={() => setShowSupport(true)}
       />
+
+      <MobileBottomNav pathname={pathname} onNavigate={handleNavigate} />
+
+      <SupportDialog open={showSupport} onOpenChange={setShowSupport} user={session?.user} />
     </>
   );
 }
