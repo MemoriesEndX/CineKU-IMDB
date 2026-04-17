@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { createStore, del } from "idb-keyval";
+import { createStore, del, get as idbGet, set as idbSet } from "idb-keyval";
 import { checkStorageAvailability, requestPersistentStorage } from "./storage";
 
 const mediaStore = createStore("media-files-store", "media-files");
@@ -59,7 +59,7 @@ export const useMediaStore = create<MediaStore>()(
           });
 
           // Store the file data
-          await set(`media-file-${media.id}`, base64Data, mediaStore);
+          await idbSet(`media-file-${media.id}`, base64Data);
 
           // Update the media list
           set((state) => ({
@@ -73,7 +73,7 @@ export const useMediaStore = create<MediaStore>()(
 
       removeMedia: async (id: string) => {
         try {
-          await del(`media-file-${id}`, mediaStore);
+          await del(`media-file-${id}`);
           set((state) => ({
             media: (state.media || []).filter((item) => item.id !== id),
           }));
@@ -83,14 +83,14 @@ export const useMediaStore = create<MediaStore>()(
         }
       },
 
-      getMediaUrl: async (id: string) => {
+      getMediaUrl: async (id: string): Promise<string> => {
         try {
-          const base64Data = await get(`media-file-${id}`, mediaStore);
+          const base64Data = await idbGet(`media-file-${id}`);
           if (!base64Data) {
             throw new Error("Media file not found");
           }
 
-          return base64Data;
+          return base64Data as string;
 
           // If you prefer to use Blob URLs (which might be more efficient for large files),
           // uncomment this code instead:

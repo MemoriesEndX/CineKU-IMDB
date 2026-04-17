@@ -3,23 +3,19 @@
 import type React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, Play, Bookmark } from "lucide-react";
+import { Star, Play, Bookmark, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
-type Movie = {
-  id: number;
-  title: string;
-  posterPath: string;
-  rating: number | null | undefined;
-  year: number;
-  overview?: string;
-  genres?: string[];
-};
+import {
+  isInWatchlist,
+  toggleWatchlistItem,
+  isInFavorites,
+  toggleFavoritesItem,
+} from "@/lib/storage/user-media";
 
 interface MovieCardProps {
   id: number;
@@ -44,51 +40,49 @@ export function MovieCard({
 }: MovieCardProps) {
   const { data: session } = useSession();
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
-    if (session?.user) {
-      const currentWatchlist = getWatchlistFromStorage();
-      const isMovieInWatchlist = currentWatchlist.some(
-        (movie) => movie.id === id
-      );
-      setIsBookmarked(isMovieInWatchlist);
+    if (session?.user?.email) {
+      setIsBookmarked(isInWatchlist(session.user.email, id, "movie"));
+      setIsFavorited(isInFavorites(session.user.email, id, "movie"));
     }
-  }, [session, id]);
-
-  const getWatchlistFromStorage = (): Movie[] => {
-    const storedSession = JSON.parse(localStorage.getItem("session") || "{}");
-    if (!storedSession?.user?.email) return [];
-
-    const watchlist = JSON.parse(
-      localStorage.getItem(`${storedSession.user.email}_watchlist`) || "[]"
-    );
-    return watchlist;
-  };
+  }, [session?.user?.email, id]);
 
   const handleBookmark = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    if (!session?.user) return;
+    if (!session?.user?.email) return;
 
-    const currentWatchlist = getWatchlistFromStorage();
+    const { added } = toggleWatchlistItem(session.user.email, {
+      id,
+      title,
+      posterPath,
+      rating,
+      year,
+      overview,
+      mediaType: "movie",
+    });
 
-    const isAlreadyInWatchlist = currentWatchlist.some(
-      (movie) => movie.id === id
-    );
+    setIsBookmarked(added);
+  };
 
-    if (!isAlreadyInWatchlist) {
-      const updatedWatchlist = [
-        ...currentWatchlist,
-        { id, title, posterPath, rating, year, overview },
-      ];
-      localStorage.setItem(
-        `${session.user.email}_watchlist`,
-        JSON.stringify(updatedWatchlist)
-      );
-      setIsBookmarked(true);
-    } else {
-      setIsBookmarked(true);
-    }
+  const handleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (!session?.user?.email) return;
+
+    const { added } = toggleFavoritesItem(session.user.email, {
+      id,
+      title,
+      posterPath,
+      rating,
+      year,
+      overview,
+      mediaType: "movie",
+    });
+
+    setIsFavorited(added);
   };
 
   return (
@@ -108,23 +102,40 @@ export function MovieCard({
             className="object-cover transition-all duration-300 group-hover:scale-110 group-hover:brightness-50"
           />
           <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            <div className="flex justify-between">
+            <div className="flex justify-between items-start gap-2">
               <Badge variant="secondary" className="w-fit">
                 Movie
               </Badge>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70"
-                onClick={handleBookmark}
-              >
-                <Bookmark
-                  className={cn(
-                    "h-4 w-4",
-                    isBookmarked ? "fill-primary text-primary" : "text-white"
-                  )}
-                />
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70"
+                  onClick={handleFavorite}
+                  title={isFavorited ? "Remove from favorites" : "Add to favorites"}
+                >
+                  <Heart
+                    className={cn(
+                      "h-4 w-4",
+                      isFavorited ? "fill-red-500 text-red-500" : "text-white"
+                    )}
+                  />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70"
+                  onClick={handleBookmark}
+                  title={isBookmarked ? "Remove from watchlist" : "Add to watchlist"}
+                >
+                  <Bookmark
+                    className={cn(
+                      "h-4 w-4",
+                      isBookmarked ? "fill-primary text-primary" : "text-white"
+                    )}
+                  />
+                </Button>
+              </div>
             </div>
             <div className="space-y-2">
               <h3 className="text-lg font-bold text-white line-clamp-1">

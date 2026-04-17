@@ -1,5 +1,18 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { Bookmark, Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
+  isInWatchlist,
+  toggleWatchlistItem,
+  isInFavorites,
+  toggleFavoritesItem,
+} from "@/lib/storage/user-media";
 
 interface AnimeCardProps {
   anime: {
@@ -13,6 +26,10 @@ interface AnimeCardProps {
 }
 
 export default function AnimeCard({ anime }: AnimeCardProps) {
+  const { data: session } = useSession();
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
+
   const year = anime.first_air_date
     ? new Date(anime.first_air_date).getFullYear()
     : null;
@@ -20,6 +37,51 @@ export default function AnimeCard({ anime }: AnimeCardProps) {
   const rating = anime.vote_average
     ? Math.round((anime.vote_average / 2) * 10) / 10
     : null;
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      setIsBookmarked(isInWatchlist(session.user.email, anime.id, "anime"));
+      setIsFavorited(isInFavorites(session.user.email, anime.id, "anime"));
+    }
+  }, [session?.user?.email, anime.id]);
+
+  const handleBookmark = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!session?.user?.email) return;
+
+    const { added } = toggleWatchlistItem(session.user.email, {
+      id: anime.id,
+      name: anime.name,
+      poster_path: anime.poster_path,
+      vote_average: anime.vote_average,
+      first_air_date: anime.first_air_date,
+      overview: anime.overview,
+      mediaType: "anime",
+    });
+
+    setIsBookmarked(added);
+  };
+
+  const handleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!session?.user?.email) return;
+
+    const { added } = toggleFavoritesItem(session.user.email, {
+      id: anime.id,
+      name: anime.name,
+      poster_path: anime.poster_path,
+      vote_average: anime.vote_average,
+      first_air_date: anime.first_air_date,
+      overview: anime.overview,
+      mediaType: "anime",
+    });
+
+    setIsFavorited(added);
+  };
 
   return (
     <Link
@@ -41,6 +103,38 @@ export default function AnimeCard({ anime }: AnimeCardProps) {
             <span className="text-[var(--foreground)]">{rating}</span>
           </div>
         )}
+
+        {/* Bookmark and Favorite Buttons on Hover */}
+        <div className="absolute top-2 left-2 z-30 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70"
+            onClick={handleFavorite}
+            title={isFavorited ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Heart
+              className={cn(
+                "h-4 w-4",
+                isFavorited ? "fill-red-500 text-red-500" : "text-white"
+              )}
+            />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70"
+            onClick={handleBookmark}
+            title={isBookmarked ? "Remove from watchlist" : "Add to watchlist"}
+          >
+            <Bookmark
+              className={cn(
+                "h-4 w-4",
+                isBookmarked ? "fill-primary text-primary" : "text-white"
+              )}
+            />
+          </Button>
+        </div>
 
         <div className="relative aspect-[2/3] overflow-hidden">
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 border-2 border-pink-500 rounded-t-lg z-20"></div>

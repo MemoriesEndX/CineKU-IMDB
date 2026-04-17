@@ -93,7 +93,7 @@ export default function AnimePage() {
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <div>
         <div className="text-center py-10">
-          <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary)] via-[var(--accent)] to-[var(--primary)] inline-block">
+          <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-400 to-cyan-400 inline-block">
             Anime
           </h1>
         </div>

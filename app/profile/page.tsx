@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Camera,
@@ -14,7 +14,6 @@ import {
   X,
   LogOut,
   Plus,
-  Play,
   Search,
   Zap,
 } from "lucide-react";
@@ -34,6 +33,14 @@ import {
 import { Label } from "@/components/ui/label";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
+import {
+  getWatchlistCount,
+  getFavoritesCount,
+  getAllWatchlistItems,
+  getAllFavoritesItems,
+  type MediaItem,
+} from "@/lib/storage/user-media";
+import { MediaItemCard } from "@/components/media-item-card";
 
 export default function MovieProfile() {
   const router = useRouter();
@@ -45,11 +52,40 @@ export default function MovieProfile() {
   const [coverUrl, setCoverUrl] = useState(
     "/placeholder.svg?height=400&width=1200"
   );
+  const [watchlistCount, setWatchlistCount] = useState(0);
+  const [favoritesCount, setFavoritesCount] = useState(0);
+  const [watchlistItems, setWatchlistItems] = useState<MediaItem[]>([]);
+  const [favoritesItems, setFavoritesItems] = useState<MediaItem[]>([]);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   const userName = session?.user?.name || "Movie Fan";
   const userImage = session?.user?.image;
   const userEmail = session?.user?.email;
+
+  // Load saved data from localStorage when component mounts or email changes
+  useEffect(() => {
+    if (userEmail) {
+      setWatchlistCount(getWatchlistCount(userEmail));
+      setFavoritesCount(getFavoritesCount(userEmail));
+      setWatchlistItems(getAllWatchlistItems(userEmail));
+      setFavoritesItems(getAllFavoritesItems(userEmail));
+    }
+  }, [userEmail]);
+
+  // Set up event listener for localStorage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      if (userEmail) {
+        setWatchlistCount(getWatchlistCount(userEmail));
+        setFavoritesCount(getFavoritesCount(userEmail));
+        setWatchlistItems(getAllWatchlistItems(userEmail));
+        setFavoritesItems(getAllFavoritesItems(userEmail));
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [userEmail]);
 
   const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -259,9 +295,13 @@ export default function MovieProfile() {
                   <h3 className="font-semibold text-sm text-[var(--muted-foreground)] uppercase tracking-wide">
                     Watchlist
                   </h3>
-                  <p className="text-4xl font-bold mt-3 text-[var(--foreground)]">0</p>
+                  <p className="text-4xl font-bold mt-3 text-[var(--foreground)]">
+                    {watchlistCount}
+                  </p>
                   <p className="text-xs text-[var(--muted-foreground)] mt-2">
-                    Curate films to watch later
+                    {watchlistCount === 1
+                      ? "item saved"
+                      : "items saved"}
                   </p>
                 </div>
                 <div className="p-3 rounded-lg bg-[var(--primary)]/15">
@@ -278,9 +318,13 @@ export default function MovieProfile() {
                   <h3 className="font-semibold text-sm text-[var(--muted-foreground)] uppercase tracking-wide">
                     Favorites
                   </h3>
-                  <p className="text-4xl font-bold mt-3 text-[var(--foreground)]">0</p>
+                  <p className="text-4xl font-bold mt-3 text-[var(--foreground)]">
+                    {favoritesCount}
+                  </p>
                   <p className="text-xs text-[var(--muted-foreground)] mt-2">
-                    Your personal top picks
+                    {favoritesCount === 1
+                      ? "item favorited"
+                      : "items favorited"}
                   </p>
                 </div>
                 <div className="p-3 rounded-lg bg-[var(--primary)]/15">
@@ -322,86 +366,94 @@ export default function MovieProfile() {
           </Card>
         </div>
 
-        {/* Activity Tabs */}
+        {/* Collection Section - Watchlist & Favorites */}
         <div className="mt-12 mb-20">
           <div className="flex items-center gap-2 mb-6">
             <h2 className="text-2xl font-bold text-[var(--foreground)]">
-              Your Activity
+              Your Collection
             </h2>
             <Film className="h-5 w-5 text-[var(--primary)]" />
           </div>
-          <Tabs defaultValue="recently-watched" className="w-full">
+          <Tabs defaultValue="watchlist" className="w-full">
             <TabsList className="grid w-full grid-cols-2 bg-[var(--card)]/40 p-1 rounded-lg border border-[var(--border)]">
               <TabsTrigger
-                value="recently-watched"
+                value="watchlist"
                 className="data-[state=active]:bg-[var(--card)] data-[state=active]:text-[var(--foreground)] data-[state=active]:shadow-md transition-all text-[var(--muted-foreground)]"
               >
-                Recently Watched
+                Watchlist ({watchlistCount})
               </TabsTrigger>
               <TabsTrigger
-                value="recommendations"
+                value="favorites"
                 className="data-[state=active]:bg-[var(--card)] data-[state=active]:text-[var(--foreground)] data-[state=active]:shadow-md transition-all text-[var(--muted-foreground)]"
               >
-                Recommendations
+                Favorites ({favoritesCount})
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="recently-watched" className="mt-6">
-              <Card className="border-[var(--border)] overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary)]/5 to-transparent pointer-events-none"></div>
-                <CardContent className="p-8 md:p-12 flex flex-col items-center justify-center text-center relative">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/5 flex items-center justify-center mb-6 border border-[var(--primary)]/20">
-                    <Play className="h-12 w-12 text-[var(--primary)]" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-[var(--foreground)] mb-2">
-                    Ready to Start Your Journey?
-                  </h3>
-                  <p className="text-[var(--muted-foreground)] max-w-2xl mb-8 leading-relaxed">
-                    Start watching movies and we'll track your viewing history. Your recently watched films will appear here as you explore the platform.
-                  </p>
-                  <Button
-                    className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-semibold"
-                    size="lg"
-                    onClick={handleExploreGenres}
-                  >
-                    <Sparkles className="h-5 w-5 mr-2" /> Discover Movies Now
-                  </Button>
-                </CardContent>
-              </Card>
+            {/* Watchlist Tab */}
+            <TabsContent value="watchlist" className="mt-6">
+              {watchlistItems.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {watchlistItems.map((item: MediaItem) => (
+                    <MediaItemCard key={`${item.mediaType}-${item.id}`} item={item} />
+                  ))}
+                </div>
+              ) : (
+                <Card className="border-[var(--border)] overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary)]/5 to-transparent pointer-events-none"></div>
+                  <CardContent className="p-8 md:p-12 flex flex-col items-center justify-center text-center relative">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/5 flex items-center justify-center mb-6 border border-[var(--primary)]/20">
+                      <Plus className="h-12 w-12 text-[var(--primary)]" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+                      Your Watchlist is Empty
+                    </h3>
+                    <p className="text-[var(--muted-foreground)] max-w-2xl mb-8 leading-relaxed">
+                      Start building your watchlist by saving movies, TV shows, and anime you want to watch later. They'll appear here for easy access.
+                    </p>
+                    <Button
+                      className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-semibold"
+                      size="lg"
+                      onClick={handleExploreGenres}
+                    >
+                      <Search className="h-5 w-5 mr-2" /> Explore & Add to Watchlist
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
 
-            <TabsContent value="recommendations" className="mt-6">
-              <Card className="border-[var(--border)] overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary)]/5 to-transparent pointer-events-none"></div>
-                <CardContent className="p-8 md:p-12 flex flex-col items-center justify-center text-center relative">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/5 flex items-center justify-center mb-6 border border-[var(--primary)]/20">
-                    <Sparkles className="h-12 w-12 text-[var(--primary)]" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-[var(--foreground)] mb-2">
-                    Personalized Just For You
-                  </h3>
-                  <p className="text-[var(--muted-foreground)] max-w-2xl mb-8 leading-relaxed">
-                    Watch movies and help us understand your unique taste. Based on your viewing history, we'll curate perfect recommendations tailored to your preferences.
-                  </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 w-full max-w-2xl">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div
-                        key={i}
-                        className="aspect-[2/3] rounded-xl bg-gradient-to-br from-[var(--card)] to-[var(--card)]/60 hover:from-[var(--primary)]/20 hover:to-[var(--primary)]/5 transition-all duration-300 flex items-center justify-center group cursor-pointer overflow-hidden border border-[var(--border)]"
-                      >
-                        <Film className="h-8 w-8 text-[var(--muted-foreground)] group-hover:text-[var(--primary)] transition-colors" />
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-semibold"
-                    size="lg"
-                    onClick={handlePopMovies}
-                  >
-                    <Film className="h-5 w-5 mr-2" /> Browse Popular Movies
-                  </Button>
-                </CardContent>
-              </Card>
+            {/* Favorites Tab */}
+            <TabsContent value="favorites" className="mt-6">
+              {favoritesItems.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {favoritesItems.map((item: MediaItem) => (
+                    <MediaItemCard key={`${item.mediaType}-${item.id}`} item={item} />
+                  ))}
+                </div>
+              ) : (
+                <Card className="border-[var(--border)] overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary)]/5 to-transparent pointer-events-none"></div>
+                  <CardContent className="p-8 md:p-12 flex flex-col items-center justify-center text-center relative">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/5 flex items-center justify-center mb-6 border border-[var(--primary)]/20">
+                      <Sparkles className="h-12 w-12 text-[var(--primary)]" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+                      No Favorites Yet
+                    </h3>
+                    <p className="text-[var(--muted-foreground)] max-w-2xl mb-8 leading-relaxed">
+                      Mark your favorite movies, TV shows, and anime to keep track of the ones you love most. Your favorites will be saved here.
+                    </p>
+                    <Button
+                      className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-semibold"
+                      size="lg"
+                      onClick={handlePopMovies}
+                    >
+                      <Film className="h-5 w-5 mr-2" /> Browse & Add Favorites
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
           </Tabs>
         </div>
