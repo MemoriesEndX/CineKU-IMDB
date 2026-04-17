@@ -1,226 +1,246 @@
-# MoviKu
+# 🎬 MoviKu
 
-MoviKu is a movie website project that uses the **TMDB API** to fetch **movie metadata** such as movie lists, movie details, credits, reviews, videos, and watch providers.
+MoviKu is a modern movie web application that uses the **TMDB API** to fetch **movie metadata**, while actual video playback is handled through **third-party streaming providers via iframe embeds**.
 
-This project **does not use TMDB as a full-movie streaming source**.  
-Movie data is fetched from **TMDB**, while the video playback on the movie page comes from **third-party streaming providers via iframe**, along with **YouTube embeds** for trailers and videos available from TMDB.
-
----
-
-## Project Architecture
-
-MoviKu is planned to be separated into **2 different websites**:
-
-### 1. MoviKu TMDB
-This website focuses on:
-- displaying movie lists
-- trending movies
-- top rated movies
-- upcoming movies
-- movie details
-- cast / credits
-- reviews
-- trailers / videos from TMDB
-- watch providers
-
-Main data source:
-- **TMDB API**
-
-TMDB authentication:
-- uses **API Read Access Token**
-- through this header:
-
-```ts
-Authorization: Bearer ${process.env.TMDB_ACCESS_TOKEN}
-````
-
-### 2. MoviKu Player
-
-This website focuses on:
-
-* player pages
-* video playback
-* iframe-based video sources from third-party providers
-* separating metadata from the player system
-
-Notes:
-
-* this website **does not fetch full movies from TMDB**
-* TMDB is only used for metadata
-* video sources come from third-party embed / iframe providers
+> ⚠️ MoviKu does **NOT** stream movies directly from TMDB.
+> TMDB is used strictly for **metadata and trailers only**.
 
 ---
 
-## Code Audit Result
+## 🚀 Overview
 
-### Summary
+MoviKu separates **content data (metadata)** from **video playback**, creating a clean and scalable architecture.
 
-The audit was completed without changing any code.
-It was found that this project uses **TMDB for metadata**, while the **main video player does not stream directly from TMDB**.
+### ✅ Metadata (from TMDB)
 
-### Authentication Methods Used
+* Movie lists (Trending, Top Rated, Upcoming)
+* Movie details
+* Cast / credits
+* Reviews
+* Trailers / videos
+* Watch providers
 
-#### 1. TMDB Authentication
+### 🎥 Video Playback
 
-The project uses:
+* Delivered via **third-party iframe providers**
+* Multiple sources available per movie
+* YouTube embeds used for trailers
+
+---
+
+## 🧱 Project Architecture
+
+MoviKu is designed to be split into **two independent systems**:
+
+---
+
+### 1. 🎞️ MoviKu TMDB (Metadata Website)
+
+Focus:
+
+* Movie browsing
+* Search & discovery
+* Movie details
+* Cast / credits
+* Reviews
+* Trailers (YouTube)
+* Watch providers
+
+Data Source:
+
+* **TMDB API**
+
+Authentication:
 
 ```ts
 Authorization: Bearer ${process.env.TMDB_ACCESS_TOKEN}
 ```
 
-This means the project uses:
+---
 
-* **TMDB API Read Access Token**
-* **not** `TMDB_API_KEY` as a query parameter
+### 2. ▶️ MoviKu Player (Streaming Website)
 
-#### 2. Internal Application Authentication
+Focus:
 
-The project also uses internal authentication with:
+* Video playback pages
+* Multi-source streaming
+* Iframe-based players
 
-* **next-auth**
-* **Google OAuth**
-* server session using `getServerSession()`
+Key Notes:
 
-This is used for certain features such as protected watchlist endpoints.
+* ❌ Does NOT use TMDB for streaming
+* ✅ Uses **external embed providers**
+* 🎯 Fully separated from metadata logic
 
 ---
 
-## Video Sources Used
+## 🎥 Video Source Architecture
 
-There are **2 video paths** on the movie page:
+### 1. TMDB Videos (Metadata Only)
 
-### 1. Video metadata from TMDB
+Used for:
 
-The movie detail page fetches additional data such as:
+* trailers
+* clips
+* video previews
 
-* videos
-* credits
-* reviews
-* watch/providers
+Rendered via:
 
-Example:
+* YouTube embeds
 
-```ts
-append_to_response=videos,credits,reviews,"watch/providers"
-```
+---
 
-This is used for:
+### 2. Main Movie Player
 
-* displaying trailers
-* displaying clips/video metadata from TMDB
-* displaying watch provider information
-
-### 2. Main video player
-
-The main video playback is rendered through:
+The main player uses:
 
 ```tsx
-<iframe src={source} ... />
+<iframe src={source} />
 ```
 
-The video source is taken from a list of third-party streaming providers through a function such as `getMoviePlayers()`.
+Source generated from:
 
-So:
-
-* **TMDB videos** = metadata / trailers
-* **YouTube embed** = trailers/videos from TMDB
-* **third-party iframe providers** = main movie player
+```ts
+getMoviePlayers()
+getTvShowPlayers()
+```
 
 ---
 
-## Key Findings
+### 🌐 Third-Party Providers Used
 
-### TMDB is used for:
+MoviKu supports multiple streaming sources:
 
-* trending movies
-* top rated movies
-* upcoming movies
-* movie details
+* VidLink
+* VidSrc (xyz / to)
+* Embed.su
+* MultiEmbed
+* 2Embed
+* AutoEmbed
+* SuperEmbed
+* MoviesAPI
+* NontonGo
+* FilmKu
+
+Example URL format:
+
+```
+https://vidsrc.xyz/embed/movie/{TMDB_ID}
+https://vidlink.pro/movie/{TMDB_ID}
+```
+
+For TV:
+
+```
+https://vidsrc.xyz/embed/tv/{ID}/{SEASON}/{EPISODE}
+```
+
+---
+
+## ⚠️ Important Notes About Video Playback
+
+* MoviKu **does NOT host video files**
+* All streaming is handled by **external providers**
+* Playback reliability depends on third-party services
+* Some sources may:
+
+  * contain ads
+  * be unstable
+  * temporarily unavailable
+
+---
+
+## 🔐 Authentication
+
+### TMDB API
+
+Uses:
+
+```env
+TMDB_ACCESS_TOKEN=YOUR_TMDB_READ_ACCESS_TOKEN
+```
+
+---
+
+### Internal Auth
+
+* NextAuth
+* Google OAuth
+* Session-based authentication
+
+Used for:
+
+* user session
+* watchlist
+* protected routes
+
+---
+
+## 📄 Page Flow
+
+### 🏠 Home Page
+
+* Fetches:
+
+  * Trending
+  * Top Rated
+  * Upcoming
+* Source: TMDB
+
+---
+
+### 🎬 Movie Page (`/movie/{id}`)
+
+Fetches:
+
+* details
 * credits
 * reviews
 * videos
-* watch providers
+* providers
 
-### The main video player uses:
+Displays:
 
-* iframe sources from third-party providers such as:
-
-  * vidlink
-  * embed.su
-  * multiembed
-  * vidsrc
-  * 2embed
-  * and other providers listed in the player file
-
-### YouTube is used for:
-
-* trailers / videos from TMDB
-
-### Local files
-
-There is a local file mechanism for certain paths, but it is **not the main movie player path**.
+* movie info
+* trailers (YouTube)
+* streaming player (iframe)
 
 ---
 
-## Page Flow
+### ▶️ Player Flow
 
-### Home Page
-
-The home page fetches movie data from TMDB using a Bearer token.
-
-Functions:
-
-* trending movies
-* top rated movies
-* upcoming movies
-
-### Movie Card
-
-When a user clicks a movie card, the user is redirected to:
-
-```txt
-/movie/{id}
+```text
+User selects movie
+↓
+MoviePlayer.tsx
+↓
+getMoviePlayers()
+↓
+List of external providers
+↓
+iframe renders selected source
+↓
+External site streams video
 ```
 
-### Movie Detail Page
-
-This page fetches:
-
-* movie details
-* videos
-* credits
-* reviews
-* watch providers
-
-Then it renders:
-
-* detailed movie information
-* TMDB / YouTube trailers
-* iframe-based movie player
-
-### Movie Player
-
-The movie player gets a list of sources from third-party providers and renders the selected source inside an iframe.
-
 ---
 
-## Important Files
+## 📁 Key Files
 
 ### Metadata / TMDB
 
-* `page.tsx`
+* `app/page.tsx`
 * `app/movie/[id]/page.tsx`
-* `movie-details.tsx`
+* `components/movie-details.tsx`
 
-### Player
+### Player System
 
 * `app/movie/[id]/MoviePlayer.tsx`
-* `players.ts`
+* `utils/players.ts`
 
 ### Auth
 
 * `app/api/auth/[...nextauth]/route.ts`
-* route files related to session / watchlist
 
 ### Environment
 
@@ -228,9 +248,7 @@ The movie player gets a list of sources from third-party providers and renders t
 
 ---
 
-## Environment Variables
-
-Use a `.env.local` file in the project root:
+## 🌱 Environment Variables
 
 ```env
 TMDB_ACCESS_TOKEN=YOUR_TMDB_READ_ACCESS_TOKEN
@@ -240,69 +258,46 @@ NEXTAUTH_SECRET=YOUR_NEXTAUTH_SECRET
 NEXTAUTH_URL=http://localhost:3000
 ```
 
-Notes:
+---
 
-* `TMDB_ACCESS_TOKEN` uses the **API Read Access Token**
-* not `TMDB_API_KEY`
+## 🧪 Code Audit Summary
+
+| Category           | Source                    | Status     |
+| ------------------ | ------------------------- | ---------- |
+| Metadata           | TMDB API                  | ✅ Active   |
+| Trailers           | TMDB + YouTube            | ✅ Active   |
+| Streaming          | External iframe providers | ✅ Active   |
+| Local video server | Express                   | ❌ Not used |
+| Local files        | videos/ folder            | ❌ Not used |
 
 ---
 
-## Audit Conclusion
+## 🧠 Final Conclusion
 
-The final conclusion of this audit is:
-
-* **metadata comes from TMDB**
-* **trailers/videos come from TMDB and are embedded through YouTube**
-* **the main movie player comes from third-party streaming providers through iframe**
-* the project uses **TMDB_ACCESS_TOKEN** with the **Bearer token** method
-* the project also uses **NextAuth + Google OAuth** for internal authentication
+* ✅ Metadata comes from **TMDB**
+* ✅ Trailers come from **TMDB (YouTube embeds)**
+* ✅ Main video playback uses **third-party iframe providers**
+* ❌ No local streaming
+* ❌ No TMDB full-movie streaming
 
 ---
 
-## Plan to Split Into 2 Websites
+## 🧭 Future Roadmap
 
-### Website 1 — MoviKu TMDB
+Recommended improvements:
 
-Focus:
-
-* movie catalog
-* search
-* movie details
-* trailers
-* cast
-* reviews
-* watch providers
-* main project branding
-
-### Website 2 — MoviKu Player
-
-Focus:
-
-* separate player pages
-* video sources from selected providers
-* iframe player
-* watching experience separated from the metadata website
-
-Purpose of this separation:
-
-* cleaner project structure
-* metadata and player logic are separated
-* easier maintenance
-* easier future development
+* ✅ Split into **2 independent apps**
+* ✅ Add fallback system between providers
+* ⚠️ Improve player stability
+* ⚠️ Handle provider failures gracefully
+* 🔐 Ensure API keys remain secure
 
 ---
 
-## Notes
+## 📌 Disclaimer
 
-This project uses TMDB as the source of movie metadata.
-TMDB is **not** the main full-movie streaming source in this project.
+MoviKu does **not host any video content**.
 
-If this project is developed further, it is recommended to:
-
-* keep TMDB usage aligned with attribution requirements
-* store environment variables securely
-* never expose tokens publicly
-* separate the metadata website and the player website with a clear structure
-
----
+All video streams are embedded from third-party providers.
+MoviKu only provides a **user interface and metadata powered by TMDB**.
 

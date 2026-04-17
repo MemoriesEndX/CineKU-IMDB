@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getAnimeDetails, getTVSeasonEpisodes } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Play, Star, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, Play, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -115,75 +115,72 @@ export default async function AnimeEpisodesPage({
       <div className="relative bg-[var(--background)] min-h-screen">
         <div className="container mx-auto px-4 py-12">
           <div className="grid gap-6">
-            {episodes.map((episode, index) => (
-              <div
+            {episodes.map((episode: any) => (
+              <Link
                 key={episode.id}
-                className="group relative overflow-hidden rounded-xl bg-[var(--card)]/50 hover:bg-[var(--card)]/80 transition-colors duration-300"
+                href={`/anime/${animeId}/episodes/${seasonNumber}/${episode.episode_number}`}
+                className="group"
               >
-                <div className="flex flex-col md:flex-row gap-6">
-                  <div className="relative md:w-[300px] aspect-video md:aspect-[16/9]">
-                    <Image
-                      src={
-                        episode.still_path
-                          ? `https://image.tmdb.org/t/p/w500${episode.still_path}`
-                          : seasonDetails.poster_path
-                          ? `https://image.tmdb.org/t/p/w500${seasonDetails.poster_path}`
-                          : "/placeholder.jpg"
-                      }
-                      alt={episode.name}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent" />
+                <div className="relative overflow-hidden rounded-xl bg-[var(--card)]/50 hover:bg-[var(--card)]/80 transition-colors duration-300">
+                  <div className="flex flex-col md:flex-row gap-6">
+                    <div className="relative md:w-[300px] aspect-video md:aspect-[16/9]">
+                      <Image
+                        src={
+                          episode.still_path
+                            ? `https://image.tmdb.org/t/p/w500${episode.still_path}`
+                            : seasonDetails.poster_path
+                            ? `https://image.tmdb.org/t/p/w500${seasonDetails.poster_path}`
+                            : "/placeholder.jpg"
+                        }
+                        alt={episode.name}
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent" />
 
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <Button className="rounded-full w-12 h-12 bg-[var(--primary)]/90 hover:bg-[var(--primary)] text-[var(--primary-foreground)]">
-                        <Play className="h-6 w-6 fill-current" />
-                      </Button>
-                    </div>
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <Button className="rounded-full w-12 h-12 bg-[var(--primary)]/90 hover:bg-[var(--primary)] text-[var(--primary-foreground)]">
+                          <Play className="h-6 w-6 fill-current" />
+                        </Button>
+                      </div>
 
-                    <div className="absolute top-3 left-3 bg-[var(--background)]/60 backdrop-blur-sm rounded-md px-2 py-1">
-                      <span className="text-sm font-medium">
-                        Episode {episode.episode_number}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 p-6">
-                    <div className="flex flex-wrap items-center gap-3 mb-3">
-                      <h3 className="text-xl font-bold text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors">
-                        {episode.name}
-                      </h3>
-                      <div className="flex items-center gap-4 text-sm text-[var(--muted-foreground)]">
-                        {episode.runtime && (
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="h-4 w-4 text-[var(--primary)]" />
-                            <span>{episode.runtime}min</span>
-                          </div>
-                        )}
-                        {episode.vote_average > 0 && (
-                          <div className="flex items-center gap-1.5">
-                            <Star className="h-4 w-4 text-[var(--accent)]" />
-                            <span>{(episode.vote_average / 2).toFixed(1)}</span>
-                          </div>
-                        )}
-                        {episode.air_date && (
-                          <div className="flex items-center gap-1.5">
-                            <Calendar className="h-4 w-4 text-[var(--primary)]" />
-                            <span>{episode.air_date}</span>
-                          </div>
-                        )}
+                      <div className="absolute top-3 left-3 bg-[var(--background)]/60 backdrop-blur-sm rounded-md px-2 py-1">
+                        <span className="text-sm font-medium">
+                          Episode {episode.episode_number}
+                        </span>
                       </div>
                     </div>
 
-                    {episode.overview && (
-                      <p className="text-[var(--muted-foreground)] group-hover:text-[var(--foreground)] transition-colors">
-                        {episode.overview}
-                      </p>
-                    )}
+                    <div className="flex-1 p-6">
+                      <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <h3 className="text-xl font-bold text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors">
+                          {episode.name}
+                        </h3>
+                        <div className="flex items-center gap-4 text-sm text-[var(--muted-foreground)]">
+                          {episode.runtime && (
+                            <div className="flex items-center gap-1.5">
+                              <Clock className="h-4 w-4 text-[var(--primary)]" />
+                              <span>{episode.runtime}min</span>
+                            </div>
+                          )}
+                          {episode.air_date && (
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="h-4 w-4 text-[var(--primary)]" />
+                              <span>{episode.air_date}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {episode.overview && (
+                        <p className="text-[var(--muted-foreground)] group-hover:text-[var(--foreground)] transition-colors">
+                          {episode.overview}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
