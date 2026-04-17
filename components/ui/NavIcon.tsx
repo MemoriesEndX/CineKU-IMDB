@@ -52,16 +52,16 @@ export function NavIcon({
           "border backdrop-blur-xl",
           active
             ? [
-                "border-white/12",
-                "bg-white/10",
+                "border-foreground/20",
+                "bg-foreground/10",
                 "shadow-[0_8px_24px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.08)]",
               ]
             : [
-                "border-white/5",
-                "bg-white/[0.04]",
+                "border-foreground/8",
+                "bg-foreground/5",
                 "shadow-[0_6px_18px_rgba(0,0,0,0.18)]",
-                "group-hover:bg-white/[0.06]",
-                "group-hover:border-white/14",
+                "group-hover:bg-foreground/8",
+                "group-hover:border-foreground/15",
               ]
         )}
       />
@@ -78,7 +78,7 @@ export function NavIcon({
       <span
         className={cn(
           "relative z-10 flex items-center justify-center transition-all duration-300",
-          active ? "text-white scale-100" : "text-zinc-400 group-hover:text-zinc-100"
+          active ? "text-foreground scale-100" : "text-muted-foreground group-hover:text-foreground/70"
         )}
       >
         <Icon

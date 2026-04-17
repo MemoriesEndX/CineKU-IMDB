@@ -15,7 +15,7 @@ type Movie = {
   id: number;
   title: string;
   posterPath: string;
-  rating: number;
+  rating: number | null | undefined;
   year: number;
   overview?: string;
   genres?: string[];
@@ -25,7 +25,7 @@ interface MovieCardProps {
   id: number;
   title: string;
   posterPath: string;
-  rating: number;
+  rating: number | null | undefined;
   year: number;
   overview?: string;
   genres?: string[];
@@ -135,7 +135,9 @@ export function MovieCard({
                 <span>•</span>
                 <div className="flex items-center">
                   <Star className="mr-1 h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                  {rating.toFixed(1)}
+                  {typeof rating === "number" && rating >= 0
+                    ? rating.toFixed(1)
+                    : "N/A"}
                 </div>
               </div>
               {overview && (

@@ -41,7 +41,7 @@ export default async function TVShowDetailsPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       {/* Immersive Hero Section */}
       <div className="relative w-full h-screen">
         {/* Dynamic Backdrop */}
@@ -58,9 +58,9 @@ export default async function TVShowDetailsPage({
           />
 
           {/* Overlay gradients */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] to-transparent" />
-          <div className="absolute inset-0 bg-[#0a0a0a]/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-[var(--background)]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)] to-transparent" />
+          <div className="absolute inset-0 bg-[var(--background)]/30" />
         </div>
 
         {/* Content */}
@@ -74,7 +74,7 @@ export default async function TVShowDetailsPage({
                   .map((genre: { id: number; name: string }) => (
                     <Badge
                       key={genre.id}
-                      className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-3 py-1.5 rounded-full"
+                      className="bg-[var(--card)] hover:bg-[var(--card-hover)] backdrop-blur-md text-[var(--foreground)] px-3 py-1.5 rounded-full border border-[var(--border)]"
                     >
                       {genre.name}
                     </Badge>
@@ -82,22 +82,22 @@ export default async function TVShowDetailsPage({
               </div>
 
               {/* Title */}
-              <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white">
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-[var(--foreground)]">
                 {tvShow.name}
               </h1>
 
               {/* Tagline */}
               {tvShow.tagline && (
-                <p className="text-xl text-white/80 italic">
+                <p className="text-xl text-[var(--muted-foreground)] italic">
                   "{tvShow.tagline}"
                 </p>
               )}
 
               {/* Stats */}
-              <div className="flex flex-wrap items-center gap-6 text-sm text-white/70">
+              <div className="flex flex-wrap items-center gap-6 text-sm text-[var(--muted-foreground)]">
                 <div className="flex items-center gap-1.5">
                   <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                  <span className="font-medium text-white">
+                  <span className="font-medium text-[var(--foreground)]">
                     {tvShow.vote_average?.toFixed(1)}
                   </span>
                   <span>/ 10</span>
@@ -105,14 +105,14 @@ export default async function TVShowDetailsPage({
 
                 {tvShow.first_air_date && (
                   <div className="flex items-center gap-1.5">
-                    <Calendar className="h-4 w-4 text-white/50" />
+                    <Calendar className="h-4 w-4 text-[var(--muted-foreground)]" />
                     <span>{tvShow.first_air_date?.split("-")[0]}</span>
                   </div>
                 )}
 
                 {tvShow.episode_run_time?.length > 0 && (
                   <div className="flex items-center gap-1.5">
-                    <Clock className="h-4 w-4 text-white/50" />
+                    <Clock className="h-4 w-4 text-[var(--muted-foreground)]" />
                     <span>{formatRuntime(tvShow.episode_run_time[0])}</span>
                   </div>
                 )}
@@ -125,30 +125,30 @@ export default async function TVShowDetailsPage({
               </div>
 
               {/* Overview */}
-              <p className="text-lg text-white/80 leading-relaxed max-w-2xl">
+              <p className="text-lg text-[var(--muted-foreground)] leading-relaxed max-w-2xl">
                 {tvShow.overview}
               </p>
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-4 pt-4">
-                <Button className="bg-white text-black hover:bg-white/90 rounded-full px-8 py-6 text-lg font-medium transition-all duration-300 flex items-center gap-2">
-                  <Play className="h-5 w-5 fill-black" /> Watch Now
+                <Button className="bg-[var(--foreground)] text-[var(--background)] hover:bg-[var(--foreground)]/90 rounded-full px-8 py-6 text-lg font-medium transition-all duration-300 flex items-center gap-2">
+                  <Play className="h-5 w-5 fill-current" /> Watch Now
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-white/20 bg-white/5 hover:bg-white/10 text-white rounded-full px-6 py-6 text-lg font-medium transition-all duration-300"
+                  className="border-[var(--border)] bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--foreground)] rounded-full px-6 py-6 text-lg font-medium transition-all duration-300"
                 >
                   <Plus className="h-5 w-5 mr-2" /> Add to List
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-white/20 bg-white/5 hover:bg-white/10 text-white rounded-full p-3 aspect-square transition-all duration-300"
+                  className="border-[var(--border)] bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--foreground)] rounded-full p-3 aspect-square transition-all duration-300"
                 >
                   <Heart className="h-5 w-5" />
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-white/20 bg-white/5 hover:bg-white/10 text-white rounded-full p-3 aspect-square transition-all duration-300"
+                  className="border-[var(--border)] bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--foreground)] rounded-full p-3 aspect-square transition-all duration-300"
                 >
                   <Share2 className="h-5 w-5" />
                 </Button>
@@ -170,7 +170,7 @@ export default async function TVShowDetailsPage({
               <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                 {cast.slice(0, 5).map((person) => (
                   <div key={person.id} className="flex-shrink-0">
-                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/10">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[var(--border)]">
                       <Image
                         src={
                           person.profile_path
@@ -200,13 +200,13 @@ export default async function TVShowDetailsPage({
       </div>
 
       {/* Main Content */}
-      <div className="bg-[#0a0a0a]">
+      <div className="bg-[var(--background)]">
         <div className="container mx-auto px-4 md:px-8   space-y-20">
           {/* Seasons Section */}
           <section>
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold text-white">Seasons</h2>
-              <Badge className="bg-white/10 text-white px-3 py-1">
+              <h2 className="text-3xl font-bold text-[var(--foreground)]">Seasons</h2>
+              <Badge className="bg-[var(--card)] text-[var(--foreground)] px-3 py-1 border border-[var(--border)]">
                 {seasons.length} {seasons.length === 1 ? "Season" : "Seasons"}
               </Badge>
             </div>
@@ -218,7 +218,7 @@ export default async function TVShowDetailsPage({
                   href={`/tv/${params.id}/season/${season.season_number}`}
                   className="group"
                 >
-                  <div className="bg-[#141414] rounded-2xl overflow-hidden transition-transform duration-300 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-purple-900/10">
+                  <div className="bg-[var(--card)] rounded-2xl overflow-hidden transition-transform duration-300 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-[var(--primary)]/10 border border-[var(--border)]">
                     <div className="aspect-video relative overflow-hidden">
                       <Image
                         src={
@@ -230,40 +230,40 @@ export default async function TVShowDetailsPage({
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[var(--card)] via-transparent to-transparent" />
 
                       <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/10 backdrop-blur-md text-white">
+                        <Badge className="bg-[var(--card)] backdrop-blur-md text-[var(--foreground)] border border-[var(--border)]">
                           Season {season.season_number}
                         </Badge>
                       </div>
 
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="bg-white/20 backdrop-blur-md rounded-full p-4 transform group-hover:scale-110 transition-transform duration-300">
-                          <Play className="h-8 w-8 fill-white" />
+                        <div className="bg-[var(--foreground)]/20 backdrop-blur-md rounded-full p-4 transform group-hover:scale-110 transition-transform duration-300">
+                          <Play className="h-8 w-8 fill-[var(--foreground)]" />
                         </div>
                       </div>
                     </div>
 
                     <div className="p-6 space-y-3">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors duration-300">
+                        <h3 className="text-xl font-bold text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors duration-300">
                           {season.name}
                         </h3>
-                        <Badge className="bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                        <Badge className="bg-[var(--primary)]/20 text-[var(--primary)] border border-[var(--primary)]/30">
                           {season.episode_count} Episodes
                         </Badge>
                       </div>
 
                       {season.air_date && (
-                        <div className="flex items-center gap-1.5 text-white/60">
+                        <div className="flex items-center gap-1.5 text-[var(--muted-foreground)]">
                           <Calendar className="h-4 w-4" />
                           <span>{season.air_date.split("-")[0]}</span>
                         </div>
                       )}
 
                       {season.overview && (
-                        <p className="text-white/70 line-clamp-2 text-sm">
+                        <p className="text-[var(--muted-foreground)] line-clamp-2 text-sm">
                           {season.overview}
                         </p>
                       )}
@@ -277,14 +277,14 @@ export default async function TVShowDetailsPage({
           {/* Cast Section */}
           {/* Cast Section */}
           <section className="relative">
-            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-purple-900/5 to-blue-900/5 rounded-3xl blur-3xl" />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[var(--primary)]/5 to-[var(--secondary)]/5 rounded-3xl blur-3xl" />
 
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold text-white">Cast & Crew</h2>
+              <h2 className="text-3xl font-bold text-[var(--foreground)]">Cast & Crew</h2>
               {credits?.cast?.length > 8 && (
                 <Link
                   href={`/tv/${params.id}/cast`}
-                  className="text-white/60 hover:text-white transition-colors flex items-center gap-1"
+                  className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors flex items-center gap-1"
                 >
                   View All <ChevronRight className="h-5 w-5" />
                 </Link>
@@ -294,7 +294,7 @@ export default async function TVShowDetailsPage({
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-6">
               {cast.map((person) => (
                 <div key={person.id} className="group">
-                  <div className="bg-[#141414] rounded-xl overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-900/10">
+                  <div className="bg-[var(--card)] rounded-xl overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:shadow-[var(--primary)]/10 border border-[var(--border)]">
                     <div className="aspect-[2/3] relative overflow-hidden">
                       <Image
                         src={
@@ -309,10 +309,10 @@ export default async function TVShowDetailsPage({
                     </div>
 
                     <div className="p-3 text-center">
-                      <h3 className="font-medium text-white text-sm line-clamp-1 group-hover:text-purple-400 transition-colors duration-300">
+                      <h3 className="font-medium text-[var(--foreground)] text-sm line-clamp-1 group-hover:text-[var(--primary)] transition-colors duration-300">
                         {person.name}
                       </h3>
-                      <p className="text-xs text-white/60 line-clamp-1 mt-0.5">
+                      <p className="text-xs text-[var(--muted-foreground)] line-clamp-1 mt-0.5">
                         {person.character}
                       </p>
                     </div>
@@ -323,10 +323,10 @@ export default async function TVShowDetailsPage({
           </section>
 
           {/* Show Info Section */}
-          <section className="bg-[#141414] rounded-2xl p-8">
+          <section className="bg-[var(--card)] rounded-2xl p-8 border border-[var(--border)]">
             <div className="flex items-center gap-2 mb-6">
-              <Info className="h-5 w-5 text-white/60" />
-              <h2 className="text-2xl font-bold text-white">
+              <Info className="h-5 w-5 text-[var(--muted-foreground)]" />
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">
                 Show Information
               </h2>
             </div>
@@ -334,12 +334,12 @@ export default async function TVShowDetailsPage({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {tvShow.networks?.length > 0 && (
                 <div>
-                  <h3 className="text-white/60 text-sm mb-2">Networks</h3>
+                  <h3 className="text-[var(--muted-foreground)] text-sm mb-2">Networks</h3>
                   <div className="flex flex-wrap gap-3">
                     {tvShow.networks.map((network) => (
                       <div
                         key={network.id}
-                        className="bg-white/5 rounded-lg p-3 flex items-center"
+                        className="bg-[var(--card)] rounded-lg p-3 flex items-center border border-[var(--border)]"
                       >
                         {network.logo_path ? (
                           <Image
@@ -350,7 +350,7 @@ export default async function TVShowDetailsPage({
                             className="h-6 object-contain"
                           />
                         ) : (
-                          <span className="text-white text-sm">
+                          <span className="text-[var(--foreground)] text-sm">
                             {network.name}
                           </span>
                         )}
@@ -362,12 +362,12 @@ export default async function TVShowDetailsPage({
 
               {tvShow.created_by?.length > 0 && (
                 <div>
-                  <h3 className="text-white/60 text-sm mb-2">Created By</h3>
+                  <h3 className="text-[var(--muted-foreground)] text-sm mb-2">Created By</h3>
                   <div className="flex flex-wrap gap-2">
                     {tvShow.created_by.map((creator) => (
                       <Badge
                         key={creator.id}
-                        className="bg-white/5 hover:bg-white/10 text-white"
+                        className="bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--foreground)] border border-[var(--border)]"
                       >
                         {creator.name}
                       </Badge>
@@ -378,14 +378,14 @@ export default async function TVShowDetailsPage({
 
               {tvShow.production_countries?.length > 0 && (
                 <div>
-                  <h3 className="text-white/60 text-sm mb-2">
+                  <h3 className="text-[var(--muted-foreground)] text-sm mb-2">
                     Production Countries
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {tvShow.production_countries.map((country, index) => (
                       <Badge
                         key={index}
-                        className="bg-white/5 hover:bg-white/10 text-white"
+                        className="bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--foreground)] border border-[var(--border)]"
                       >
                         {country.name}
                       </Badge>
@@ -396,12 +396,12 @@ export default async function TVShowDetailsPage({
 
               {tvShow.spoken_languages?.length > 0 && (
                 <div>
-                  <h3 className="text-white/60 text-sm mb-2">Languages</h3>
+                  <h3 className="text-[var(--muted-foreground)] text-sm mb-2">Languages</h3>
                   <div className="flex flex-wrap gap-2">
                     {tvShow.spoken_languages.map((language, index) => (
                       <Badge
                         key={index}
-                        className="bg-white/5 hover:bg-white/10 text-white"
+                        className="bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--foreground)] border border-[var(--border)]"
                       >
                         {language.english_name || language.name}
                       </Badge>
@@ -415,7 +415,7 @@ export default async function TVShowDetailsPage({
           {/* Similar Shows Section */}
           <section>
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold text-white">
+              <h2 className="text-3xl font-bold text-[var(--foreground)]">
                 You May Also Like
               </h2>
               {/* <Link
@@ -437,7 +437,7 @@ export default async function TVShowDetailsPage({
                     href={`/tv/${show.id}`}
                     className="group block w-[180px]"
                   >
-                    <div className="bg-[#141414] rounded-xl overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-900/10">
+                    <div className="bg-[var(--card)] rounded-xl overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:shadow-[var(--primary)]/10 border border-[var(--border)]">
                       <div className="aspect-[2/3] relative overflow-hidden">
                         <Image
                           src={
@@ -449,29 +449,29 @@ export default async function TVShowDetailsPage({
                           fill
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[var(--card)] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                         <div className="absolute top-2 right-2">
-                          <div className="bg-black/50 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium flex items-center gap-1">
+                          <div className="bg-[var(--card)]/80 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium flex items-center gap-1 border border-[var(--border)]">
                             <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                            <span className="text-white">
+                            <span className="text-[var(--foreground)]">
                               {show.vote_average?.toFixed(1)}
                             </span>
                           </div>
                         </div>
 
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <div className="bg-white/20 backdrop-blur-md rounded-full p-3 transform group-hover:scale-110 transition-transform duration-300">
-                            <Play className="h-6 w-6 fill-white" />
+                          <div className="bg-[var(--foreground)]/20 backdrop-blur-md rounded-full p-3 transform group-hover:scale-110 transition-transform duration-300">
+                            <Play className="h-6 w-6 fill-[var(--foreground)]" />
                           </div>
                         </div>
                       </div>
 
                       <div className="p-3">
-                        <h3 className="font-medium text-white text-sm line-clamp-1 group-hover:text-purple-400 transition-colors duration-300">
+                        <h3 className="font-medium text-[var(--foreground)] text-sm line-clamp-1 group-hover:text-[var(--primary)] transition-colors duration-300">
                           {show.name}
                         </h3>
-                        <p className="text-xs text-white/60 mt-0.5">
+                        <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
                           {show.first_air_date?.split("-")[0]}
                         </p>
                       </div>

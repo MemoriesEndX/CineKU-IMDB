@@ -116,6 +116,14 @@ export async function getTVShowSeasons(tvId: string) {
   }
 }
 export async function getTVSeasonEpisodes(tvId: string, seasonNumber: string) {
+  // Validate inputs
+  if (!tvId || tvId === "undefined") {
+    throw new Error(`Invalid TV ID provided: ${tvId}`);
+  }
+  if (!seasonNumber || seasonNumber === "undefined") {
+    throw new Error(`Invalid season number provided: ${seasonNumber}`);
+  }
+
   const url = `https://api.themoviedb.org/3/tv/${tvId}/season/${seasonNumber}`;
 
   try {
@@ -124,15 +132,21 @@ export async function getTVSeasonEpisodes(tvId: string, seasonNumber: string) {
         Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}`,
         "Content-Type": "application/json",
       },
+      cache: "no-store",
     });
 
     const data = await res.json();
 
     if (!res.ok) {
       console.error("TMDB API Error:", data);
+      console.error(`Failed to fetch from URL: ${url}`);
       throw new Error(
         `Failed to fetch season episodes: ${data.status_message}`
       );
+    }
+
+    if (!data.episodes || data.episodes.length === 0) {
+      console.warn(`No episodes found for TV ID ${tvId}, Season ${seasonNumber}`);
     }
 
     const episodes =
@@ -159,8 +173,8 @@ export async function getTVSeasonEpisodes(tvId: string, seasonNumber: string) {
       },
     };
   } catch (error) {
-    console.error("Fetch error:", error);
-    throw new Error("Failed to fetch season episodes");
+    console.error(`Fetch error for TV ID ${tvId}, Season ${seasonNumber}:`, error);
+    throw new Error(`Failed to fetch season episodes: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 export async function getTVEpisodeStream(

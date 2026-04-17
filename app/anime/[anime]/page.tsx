@@ -21,7 +21,7 @@ export default async function AnimeDetailsPage({
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <div className="relative h-[80vh] w-full">
         <div className="absolute inset-0 z-0">
           <Image
@@ -37,7 +37,7 @@ export default async function AnimeDetailsPage({
             className="object-cover object-center"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-[var(--background)]/80 to-[var(--background)]/20" />
         </div>
 
         <div className="absolute inset-0 z-10 flex items-end">
@@ -54,18 +54,18 @@ export default async function AnimeDetailsPage({
                   alt={anime.name}
                   width={300}
                   height={450}
-                  className="relative rounded-xl shadow-2xl border border-white/10 transform transition-transform duration-500 hover:scale-105"
+                  className="relative rounded-xl shadow-2xl border border-[var(--border)] transform transition-transform duration-500 hover:scale-105"
                 />
               </div>
 
               <div className="flex-1 space-y-6">
-                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">
+                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[var(--foreground)]">
                   {anime.name}
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-3">
                   {anime.vote_average && (
-                    <Badge className="bg-rose-500/90 hover:bg-rose-500 text-white px-3 py-1 text-sm font-medium flex items-center gap-1">
+                    <Badge className="bg-[var(--primary)]/90 hover:bg-[var(--primary)] text-[var(--primary-foreground)] px-3 py-1 text-sm font-medium flex items-center gap-1">
                       <Star className="h-4 w-4" />
                       <span className="font-bold">
                         {(anime.vote_average / 2).toFixed(1)}
@@ -77,7 +77,7 @@ export default async function AnimeDetailsPage({
                     <Badge
                       key={genre.id}
                       variant="outline"
-                      className="border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20"
+                      className="border-[var(--border)] bg-[var(--card)]/50 backdrop-blur-sm hover:bg-[var(--card)]"
                     >
                       {genre.name}
                     </Badge>
@@ -86,7 +86,7 @@ export default async function AnimeDetailsPage({
                   {anime.first_air_date && (
                     <Badge
                       variant="outline"
-                      className="border-white/30 bg-white/10 backdrop-blur-sm flex items-center gap-1"
+                      className="border-[var(--border)] bg-[var(--card)]/50 backdrop-blur-sm flex items-center gap-1"
                     >
                       <Calendar className="h-3.5 w-3.5" />
                       <span>{anime.first_air_date}</span>
@@ -94,17 +94,17 @@ export default async function AnimeDetailsPage({
                   )}
                 </div>
 
-                <p className="text-lg text-gray-300 max-w-3xl leading-relaxed">
+                <p className="text-lg text-[var(--muted-foreground)] max-w-3xl leading-relaxed">
                   {anime.overview || "No description available."}
                 </p>
 
                 <div className="pt-4 flex gap-4">
-                  <Button className="bg-gradient-to-r from-rose-600 to-violet-500 hover:from-rose-700 hover:to-violet-600 text-white rounded-full px-8 py-6 text-lg font-medium">
+                  <Button className="bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] hover:from-[var(--primary)] hover:to-[var(--accent)] text-[var(--primary-foreground)] rounded-full px-8 py-6 text-lg font-medium">
                     <Play className="mr-2 h-5 w-5 fill-white" /> Watch Now
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full px-8 py-6 text-lg font-medium"
+                    className="border-[var(--border)] bg-[var(--card)]/50 backdrop-blur-sm hover:bg-[var(--card)] rounded-full px-8 py-6 text-lg font-medium"
                   >
                     <Plus className="mr-2 h-5 w-5" /> My List
                   </Button>
@@ -116,16 +116,16 @@ export default async function AnimeDetailsPage({
       </div>
 
       {anime.seasons?.length > 0 && (
-        <div className="relative bg-gradient-to-b from-black to-gray-900 py-16">
+        <div className="relative bg-[var(--background)] py-16">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold flex items-center gap-3 text-white">
-                <Film className="h-7 w-7 text-rose-500" />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-400 to-violet-400">
+              <h2 className="text-3xl font-bold flex items-center gap-3 text-[var(--foreground)]">
+                <Film className="h-7 w-7 text-[var(--primary)]" />
+                <span className="text-[var(--foreground)]">
                   Seasons
                 </span>
               </h2>
-              <Badge className="bg-white/10 backdrop-blur-sm text-white px-4 py-1.5 text-base">
+              <Badge className="bg-[var(--card)]/50 backdrop-blur-sm text-[var(--foreground)] px-4 py-1.5 text-base">
                 {anime.seasons.length}{" "}
                 {anime.seasons.length === 1 ? "Season" : "Seasons"}
               </Badge>
@@ -138,7 +138,7 @@ export default async function AnimeDetailsPage({
                   href={`/anime/${anime.id}/episodes/${season.season_number}`}
                   className="group block"
                 >
-                  <div className="relative overflow-hidden rounded-xl bg-gray-800 transition-all duration-500 group-hover:shadow-[0_0_30px_rgba(244,114,182,0.5)] group-hover:scale-[1.03]">
+                  <div className="relative overflow-hidden rounded-xl bg-[var(--card)] transition-all duration-500 group-hover:shadow-[0_0_30px_rgba(244,114,182,0.5)] group-hover:scale-[1.03]">
                     <div className="aspect-[2/3] relative overflow-hidden">
                       <Image
                         src={
@@ -162,26 +162,26 @@ export default async function AnimeDetailsPage({
                     </div>
 
                     <div className="p-5 space-y-3">
-                      <h3 className="text-xl font-bold text-white group-hover:text-rose-400 transition-colors duration-300">
+                      <h3 className="text-xl font-bold text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors duration-300">
                         {season.name}
                       </h3>
 
-                      <div className="flex items-center gap-4 text-gray-400">
+                      <div className="flex items-center gap-4 text-[var(--muted-foreground)]">
                         <div className="flex items-center gap-1.5">
-                          <Clock className="h-4 w-4 text-rose-400" />
+                          <Clock className="h-4 w-4 text-[var(--primary)]" />
                           <span>{season.episode_count} Episodes</span>
                         </div>
 
                         {season.air_date && (
                           <div className="flex items-center gap-1.5">
-                            <Calendar className="h-4 w-4 text-violet-400" />
+                            <Calendar className="h-4 w-4 text-[var(--accent)]" />
                             <span>{season.air_date}</span>
                           </div>
                         )}
                       </div>
 
                       {season.overview && (
-                        <p className="text-sm text-gray-400 line-clamp-2 group-hover:text-gray-300 transition-colors duration-300">
+                        <p className="text-sm text-[var(--muted-foreground)] line-clamp-2 group-hover:text-[var(--foreground)] transition-colors duration-300">
                           {season.overview}
                         </p>
                       )}

@@ -5,7 +5,7 @@ export default async function AnimePage() {
   const animes = await getAnimes();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-purple-950 to-gray-900 text-white">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       {/* <div className="fixed inset-0 z-0 opacity-10">
         <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-pink-500 blur-[100px]"></div>
         <div className="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-purple-500 blur-[120px]"></div>
@@ -14,7 +14,7 @@ export default async function AnimePage() {
 
       <div>
         <div className=" text-center py-10">
-          <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-400 to-cyan-400 inline-block">
+          <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary)] via-[var(--accent)] to-[var(--primary)] inline-block">
             Anime
           </h1>
           {/* <div className="w-24 h-1 bg-gradient-to-r from-pink-500 to-purple-500 mx-auto"></div>
@@ -31,8 +31,8 @@ export default async function AnimePage() {
                 key={genre}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   genre === "All"
-                    ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white"
-                    : "bg-gray-800/50 text-gray-300 hover:bg-gray-700/50"
+                    ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
+                    : "bg-[var(--card)]/50 text-[var(--muted-foreground)] hover:bg-[var(--card-hover)]/50"
                 }`}
               >
                 {genre}
@@ -46,9 +46,9 @@ export default async function AnimePage() {
             animes.map((anime) => <AnimeCard key={anime.id} anime={anime} />)
           ) : (
             <div className="col-span-full text-center py-20">
-              <div className="inline-block p-6 rounded-full bg-gray-800/50 mb-4">
+              <div className="inline-block p-6 rounded-full bg-[var(--card)]/50 mb-4">
                 <svg
-                  className="w-10 h-10 text-gray-400"
+                  className="w-10 h-10 text-[var(--muted-foreground)]"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -62,8 +62,8 @@ export default async function AnimePage() {
                   />
                 </svg>
               </div>
-              <p className="text-xl text-gray-400">No anime found.</p>
-              <p className="text-gray-500 mt-2">
+              <p className="text-xl text-[var(--muted-foreground)]">No anime found.</p>
+              <p className="text-[var(--muted-foreground)]/70 mt-2">
                 Try again later or check your connection.
               </p>
             </div>

@@ -90,7 +90,7 @@ function BottomActions({
   onSupportClick,
 }: BottomActionsProps) {
   return (
-    <div className="relative z-10 flex flex-col items-center gap-1.5 border-t border-white/5 pt-1.5">
+    <div className="relative z-10 flex flex-col items-center gap-1.5 border-t border-border/30 pt-1.5">
       <NavIcon
         icon={Library}
         label="Library"
@@ -106,7 +106,7 @@ function BottomActions({
         showIndicator={false}
         onClick={onSupportClick}
       />
-      <p className="mt-1 px-1.5 text-center text-[8px] leading-3 text-zinc-400 lg:text-[8.5px]">
+      <p className="mt-1 px-1.5 text-center text-[8px] leading-3 text-muted-foreground lg:text-[8.5px]">
         {greetingText}
       </p>
     </div>
@@ -120,14 +120,17 @@ function DesktopSidebar({
   onSupportClick,
 }: DesktopSidebarProps) {
   return (
-    <aside className="fixed left-4 top-1/2 -translate-y-1/2 z-40 hidden w-[72px] flex-col overflow-hidden rounded-[2.5rem] border border-white/5 bg-black/30 p-1.5 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-2xl md:flex lg:left-6">
+    <aside 
+      className="fixed left-4 top-1/2 -translate-y-1/2 z-40 hidden w-[72px] flex-col overflow-hidden rounded-[2.5rem] border border-border bg-card/50 p-1.5 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition-all duration-300 md:flex lg:left-6 data-[sidebar=compact]:w-16 data-[sidebar=compact]:p-1"
+      data-sidebar="default"
+    >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.02] via-transparent to-transparent rounded-[2.5rem]" />
 
       <button
         type="button"
         onClick={() => onNavigate("/")}
         aria-label="Go to home"
-        className="relative z-10 mb-1 flex h-10 w-10 items-center justify-center self-center overflow-hidden rounded-2xl border border-white/5 bg-white/[0.04] transition-transform duration-300 hover:scale-105 hover:bg-white/[0.06]"
+        className="relative z-10 mb-1 flex h-10 w-10 items-center justify-center self-center overflow-hidden rounded-2xl border border-border/50 bg-card transition-transform duration-300 hover:scale-105 hover:bg-card-hover"
       >
         <img
           src={`/movie.png`}
@@ -168,7 +171,7 @@ function MobileBottomNav({ pathname, onNavigate }: MobileBottomNavProps) {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 md:hidden">
       <div className="mx-auto w-fit px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
-        <nav className={cn("pointer-events-auto flex items-center gap-1 rounded-full border border-white/5", "bg-black/30 px-2 py-2 shadow-[0_20px_60px_rgba(0,0,0,0.45)] shadow-black/40 backdrop-blur-2xl") }>
+        <nav className={cn("pointer-events-auto flex items-center gap-1 rounded-full border border-border/50", "bg-card/50 px-2 py-2 shadow-[0_20px_60px_rgba(0,0,0,0.45)] shadow-black/40 backdrop-blur-2xl transition-all duration-300") }>
           {mobileRoutes.map((route) => (
             <NavIcon
               key={route.href}

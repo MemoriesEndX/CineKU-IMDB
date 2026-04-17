@@ -3,34 +3,14 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 142.1 76.2% 36.3%;
-    --radius: 0.75rem;
-  }
-
-  .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 0 0% 95%;
-    --card: 24 9.8% 10%;
+  /* Default/Midnight theme */
+  :root,
+  html[data-theme="midnight"] {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --card: 20 14.3% 8%;
     --card-foreground: 0 0% 95%;
+    --card-hover: 24 9.8% 12%;
     --popover: 0 0% 9%;
     --popover-foreground: 0 0% 95%;
     --primary: 142.1 70.6% 45.3%;
@@ -39,13 +19,89 @@
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 15%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 12 6.5% 15.1%;
+    --accent: 142.1 70.6% 45.3%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 85.7% 97.3%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 142.4 71.8% 29.2%;
+    --radius: 0.75rem;
+  }
+
+  /* Ocean theme - cool blue tones */
+  html[data-theme="ocean"] {
+    --background: 200 40% 3%;
+    --foreground: 200 20% 98%;
+    --card: 200 30% 10%;
+    --card-foreground: 200 20% 95%;
+    --card-hover: 200 30% 14%;
+    --popover: 200 30% 8%;
+    --popover-foreground: 200 20% 95%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 200 100% 3%;
+    --secondary: 200 25% 18%;
+    --secondary-foreground: 200 20% 98%;
+    --muted: 200 20% 20%;
+    --muted-foreground: 200 15% 65%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 200 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 200 25% 18%;
+    --input: 200 25% 18%;
+    --ring: 199 89% 48%;
+    --radius: 0.75rem;
+  }
+
+  /* Crimson theme - bold red accents */
+  html[data-theme="crimson"] {
+    --background: 0 0% 3%;
+    --foreground: 0 0% 98%;
+    --card: 0 30% 12%;
+    --card-foreground: 0 0% 95%;
+    --card-hover: 0 30% 16%;
+    --popover: 0 30% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 0 89% 51%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 30% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 20% 20%;
+    --muted-foreground: 0 10% 65%;
+    --accent: 0 89% 51%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 89% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 30% 18%;
+    --input: 0 30% 18%;
+    --ring: 0 89% 51%;
+    --radius: 0.75rem;
+  }
+
+  /* Lite theme - light and minimal */
+  html[data-theme="lite"] {
+    --background: 210 40% 98%;
+    --foreground: 210 20% 8%;
+    --card: 210 30% 95%;
+    --card-foreground: 210 20% 10%;
+    --card-hover: 210 30% 92%;
+    --popover: 210 30% 98%;
+    --popover-foreground: 210 20% 10%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 210 100% 98%;
+    --secondary: 210 20% 88%;
+    --secondary-foreground: 210 20% 15%;
+    --muted: 210 15% 85%;
+    --muted-foreground: 210 10% 45%;
+    --accent: 210 100% 50%;
+    --accent-foreground: 210 100% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 210 100% 50%;
+    --radius: 0.75rem;
   }
 }
 
@@ -53,8 +109,32 @@
   * {
     @apply border-border;
   }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Transition for smooth theme switching */
+  * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* Disable transitions when motion is off */
+  html[data-motion="off"] * {
+    transition: none !important;
+  }
+
+  /* Blur effect toggle */
+  html[data-blur="off"] {
+    filter: none;
+  }
+
+  html[data-blur="on"] .blur-container {
+    backdrop-filter: blur(8px);
   }
 }
 

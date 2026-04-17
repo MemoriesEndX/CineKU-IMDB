@@ -6,6 +6,7 @@ import { FaPlay } from "react-icons/fa6";
 import IconButton from "@/components/ui/IconButton";
 
 export default function EpisodePlayer({ tvShow, episode }) {
+  // Player source fetching - streaming logic UNCHANGED
   const players = getTvShowPlayers(
     tvShow.id,
     episode.season_number,
@@ -27,7 +28,7 @@ export default function EpisodePlayer({ tvShow, episode }) {
           {players.map(
             ({ title, source }) =>
               selectedSource === title && (
-                <Card key={title}>
+                <Card key={title} className="bg-[var(--card)] border border-[var(--border)]">
                   <Skeleton className="absolute aspect-video size-full" />
                   <iframe
                     className="aspect-video size-full"
@@ -54,16 +55,16 @@ export default function EpisodePlayer({ tvShow, episode }) {
           </Select>
         </div>
       ) : (
-        <Card className="group aspect-video size-full relative">
+        <Card className="group aspect-video size-full relative bg-[var(--card)] border border-[var(--border)]">
           <Image
             isBlurred
             alt={episode.name}
             className="w-full h-full object-cover"
             src={`https://image.tmdb.org/t/p/w780/${episode.still_path}`}
           />
-          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
+          <div className="absolute inset-0 bg-[var(--card)]/40 group-hover:bg-[var(--card)]/50 transition-colors" />
           <IconButton
-            icon={<FaPlay className="text-3xl text-white" />}
+            icon={<FaPlay className="text-3xl text-[var(--foreground)]" />}
             radius="full"
             className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 scale-125 group-hover:scale-150 transition-transform"
             color="default"

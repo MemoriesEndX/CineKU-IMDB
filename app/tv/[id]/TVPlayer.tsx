@@ -27,6 +27,7 @@ const TVPlayer = forwardRef<HTMLDivElement, TVPlayerProps>(
   ({ tvId, season, episode, backdrop, title }, ref) => {
     console.log("TVPlayer Component Rendered", tvId, season, episode);
 
+    // Streaming player sources - UNCHANGED
     const players = getTVEpisodePlayers(tvId, season, episode);
     console.log("Players fetched:", players);
 
@@ -54,7 +55,13 @@ const TVPlayer = forwardRef<HTMLDivElement, TVPlayerProps>(
     };
 
     const Placeholder = () => (
-      <Card shadow="md" className="group aspect-video size-full">
+      <Card 
+        shadow="md" 
+        className="group aspect-video size-full bg-[var(--card)] border border-[var(--border)]"
+        style={{
+          backgroundColor: 'var(--card)',
+        }}
+      >
         <Image
           isBlurred
           alt={title}
@@ -83,10 +90,17 @@ const TVPlayer = forwardRef<HTMLDivElement, TVPlayerProps>(
       return players.map(
         ({ title, source }) =>
           selectedSource === title && (
-            <Card key={title} shadow="md" className="relative">
+            <Card 
+              key={title} 
+              shadow="md" 
+              className="relative bg-[var(--card)] border border-[var(--border)]"
+              style={{
+                backgroundColor: 'var(--card)',
+              }}
+            >
               <Skeleton className="absolute aspect-video size-full" />
               <iframe
-                className="z-10 aspect-video size-full"
+                className="z-10 aspect-video size-full rounded"
                 src={source}
                 allowFullScreen
               />

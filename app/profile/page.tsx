@@ -16,6 +16,7 @@ import {
   Plus,
   Play,
   Search,
+  Zap,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,7 @@ export default function MovieProfile() {
   const { data: session } = useSession();
   const [editMode, setEditMode] = useState(false);
   const [userBio, setUserBio] = useState(
-    "Just joined! Ready to discover amazing movies and build my collection."
+    "Passionate about discovering amazing movies and building the perfect watchlist."
   );
   const [coverUrl, setCoverUrl] = useState(
     "/placeholder.svg?height=400&width=1200"
@@ -71,21 +72,26 @@ export default function MovieProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
-      <div className="relative h-64 md:h-80 w-full overflow-hidden">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      {/* Hero Cover Section */}
+      <div className="relative h-56 md:h-72 w-full overflow-hidden group">
         <div className="absolute inset-0">
           <img
             src={coverUrl || "/placeholder.svg"}
             alt="Profile Cover"
-            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+          {/* Gradient overlay - ensures text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-[var(--background)]/40 to-transparent"></div>
+          {/* Secondary subtle overlay */}
+          <div className="absolute inset-0 bg-[var(--background)]/10"></div>
         </div>
 
+        {/* Camera Button */}
         <Button
           variant="outline"
           size="icon"
-          className="absolute top-4 right-4 bg-black/30 hover:bg-black/50 border-none text-white"
+          className="absolute top-4 right-4 bg-[var(--card)]/70 hover:bg-[var(--card)] border-[var(--border)] text-[var(--foreground)] backdrop-blur-sm transition-all duration-300"
           onClick={() => coverInputRef.current?.click()}
         >
           <Camera className="h-4 w-4" />
@@ -100,13 +106,17 @@ export default function MovieProfile() {
         />
       </div>
 
-      <div className="container mx-auto px-4 relative -mt-20">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex flex-col items-center md:items-start">
-            <div className="relative">
-              <Avatar className="h-32 w-32 border-4 border-gray-800 shadow-lg">
+      {/* Profile Content */}
+      <div className="container mx-auto px-4 relative -mt-16 md:-mt-20 pb-8">
+        {/* Profile Header Card */}
+        <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 md:gap-8 items-start">
+          {/* Avatar Section */}
+          <div className="flex justify-center md:justify-start">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-[var(--primary)] to-[var(--primary)]/50 rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+              <Avatar className="h-40 w-40 border-4 border-[var(--card)] shadow-2xl relative">
                 <AvatarImage src={userImage || ""} alt={userName} />
-                <AvatarFallback className="bg-purple-900 text-2xl">
+                <AvatarFallback className="text-4xl md:text-5xl font-bold text-black">
                   {userName
                     ?.split(" ")
                     .map((n) => n[0])
@@ -114,247 +124,281 @@ export default function MovieProfile() {
                 </AvatarFallback>
               </Avatar>
             </div>
+          </div>
 
-            <div className="mt-4 text-center md:text-left">
-              {editMode ? (
-                <div className="space-y-3">
-                  <div>
-                    <Label htmlFor="bio" className="text-gray-300">
-                      Bio
-                    </Label>
-                    <textarea
-                      id="bio"
-                      value={userBio}
-                      onChange={(e) => setUserBio(e.target.value)}
-                      className="w-full max-w-xs h-24 px-3 py-2 rounded-md bg-gray-800 border-gray-700 text-white"
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => setEditMode(false)}
-                      size="sm"
-                      className="bg-purple-600 hover:bg-purple-700"
-                    >
-                      <Save className="h-4 w-4 mr-1" /> Save
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => setEditMode(false)}
-                      size="sm"
-                      className="border-gray-600 text-gray-300 hover:bg-gray-800"
-                    >
-                      <X className="h-4 w-4 mr-1" /> Cancel
-                    </Button>
-                  </div>
+          {/* User Info Section */}
+          <div className="flex flex-col justify-center w-full">
+            {editMode ? (
+              <div className="space-y-4 bg-[var(--card)]/40 rounded-xl p-6 border border-[var(--border)]/30 backdrop-blur-sm">
+                <div>
+                  <Label htmlFor="bio" className="text-[var(--foreground)] font-semibold mb-2 block">
+                    Bio
+                  </Label>
+                  <textarea
+                    id="bio"
+                    value={userBio}
+                    onChange={(e) => setUserBio(e.target.value)}
+                    placeholder="Tell us about your movie taste..."
+                    className="w-full h-32 px-4 py-3 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all"
+                  />
                 </div>
-              ) : (
-                <>
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-2xl font-bold text-white">
+                <div className="flex gap-2 justify-center md:justify-start">
+                  <Button
+                    onClick={() => setEditMode(false)}
+                    size="sm"
+                    className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)]"
+                  >
+                    <Save className="h-4 w-4 mr-2" /> Save Bio
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setEditMode(false)}
+                    size="sm"
+                    className="border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--card)]"
+                  >
+                    <X className="h-4 w-4 mr-2" /> Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Name and Status */}
+                <div className="flex flex-col gap-3 mb-4">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h1 className="text-4xl md:text-5xl font-bold text-black">
                       {userName}
                     </h1>
                     <Badge
-                      variant="outline"
-                      className="bg-purple-900/50 text-purple-300 border-purple-700"
+                      variant="secondary"
+                      className="bg-[var(--primary)]/15 text-[var(--primary)] border-[var(--primary)]/30 font-medium"
                     >
-                      New User
+                      <Sparkles className="h-3 w-3 mr-1" /> Member
                     </Badge>
                   </div>
-                  <p className="text-gray-400 mt-1 max-w-md">{userBio}</p>
-                  <div className="mt-3 flex gap-2">
-                    <Button
-                      onClick={() => setEditMode(true)}
-                      size="sm"
-                      variant="outline"
-                      className="border-gray-700 hover:bg-gray-800 text-gray-300"
-                    >
-                      <Edit className="h-4 w-4 mr-1" /> Edit Bio
-                    </Button>
-                    <Dialog>
-                      <DialogTrigger asChild>
+
+                  {/* Bio */}
+                  <p className="text-black text-base leading-relaxed max-w-2xl">
+                    {userBio}
+                  </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 flex-wrap">
+                  <Button
+                    onClick={() => setEditMode(true)}
+                    variant="outline"
+                    className="border-[var(--border)] bg-[var(--card)]/40 hover:bg-[var(--card)]/70 text-[var(--foreground)] transition-all"
+                  >
+                    <Edit className="h-4 w-4 mr-2" /> Edit Bio
+                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="border-[var(--destructive)]/50 bg-[var(--destructive)]/10 hover:bg-[var(--destructive)]/20 text-[var(--destructive)] transition-all"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" /> Sign Out
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-[var(--card)] border-[var(--border)] text-[var(--foreground)]">
+                      <DialogHeader>
+                        <DialogTitle className="text-[var(--foreground)]">
+                          Sign Out
+                        </DialogTitle>
+                      </DialogHeader>
+                      <p className="text-[var(--muted-foreground)]">
+                        Are you sure you want to sign out? You'll be able to sign back in anytime.
+                      </p>
+                      <div className="flex justify-end gap-2 mt-6">
                         <Button
-                          size="sm"
-                          variant="destructive"
-                          className="bg-red-900 hover:bg-red-800 text-white"
+                          variant="outline"
+                          className="border-[var(--border)] hover:bg-[var(--card-hover)] text-[var(--foreground)]"
                         >
-                          <LogOut className="h-4 w-4 mr-1" /> Sign Out
+                          Cancel
                         </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-gray-800 border-gray-700 text-white">
-                        <DialogHeader>
-                          <DialogTitle>
-                            Are you sure you want to sign out?
-                          </DialogTitle>
-                        </DialogHeader>
-                        <div className="flex justify-end gap-2 mt-4">
-                          <Button
-                            variant="outline"
-                            className="border-gray-600 hover:bg-gray-700 text-gray-300"
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            className="bg-red-700 hover:bg-red-600"
-                            onClick={() => signOut()}
-                          >
-                            Sign Out
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 md:mt-0">
-            <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-purple-900/40 to-indigo-900/40">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-lg text-white">
-                    Movies Watched
-                  </h3>
-                  <Film className="h-5 w-5 text-purple-400" />
+                        <Button
+                          className="bg-[var(--destructive)] hover:bg-[var(--destructive)]/90 text-[var(--destructive-foreground)]"
+                          onClick={() => signOut()}
+                        >
+                          <LogOut className="h-4 w-4 mr-2" /> Sign Out
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
-                <p className="text-3xl font-bold mt-2 text-white">0</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  Start your movie journey
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-pink-900/40 to-red-900/40">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-lg text-white">
-                    Watchlist
-                  </h3>
-                  <Plus className="h-5 w-5 text-pink-400" />
-                </div>
-                <p className="text-3xl font-bold mt-2 text-white">0</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  Add movies to watch later
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-blue-900/40 to-cyan-900/40">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-lg text-white">
-                    Favorites
-                  </h3>
-                  <Sparkles className="h-5 w-5 text-blue-400" />
-                </div>
-                <p className="text-3xl font-bold mt-2 text-white">0</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  Save your favorite films
-                </p>
-              </CardContent>
-            </Card>
+              </>
+            )}
           </div>
         </div>
 
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-3 text-white">
-            Favorite Genres
-          </h2>
-          <Card className="border-none bg-gray-800/50">
-            <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-              <div className="w-16 h-16 rounded-full bg-purple-900/50 flex items-center justify-center mb-4">
-                <Popcorn className="h-8 w-8 text-purple-400" />
+        {/* Stats Cards Section */}
+        <div className="mt-12 md:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Card className="overflow-hidden border-[var(--border)] hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-[var(--card)] to-[var(--card)]/60">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-semibold text-sm text-[var(--muted-foreground)] uppercase tracking-wide">
+                    Movies Watched
+                  </h3>
+                  <p className="text-4xl font-bold mt-3 text-[var(--foreground)]">0</p>
+                  <p className="text-xs text-[var(--muted-foreground)] mt-2">
+                    Begin your cinema adventure
+                  </p>
+                </div>
+                <div className="p-3 rounded-lg bg-[var(--primary)]/15">
+                  <Film className="h-6 w-6 text-[var(--primary)]" />
+                </div>
               </div>
-              <h3 className="text-lg font-medium text-white">
-                Discover Your Taste
+            </CardContent>
+          </Card>
+
+          <Card className="overflow-hidden border-[var(--border)] hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-[var(--card)] to-[var(--card)]/60">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-semibold text-sm text-[var(--muted-foreground)] uppercase tracking-wide">
+                    Watchlist
+                  </h3>
+                  <p className="text-4xl font-bold mt-3 text-[var(--foreground)]">0</p>
+                  <p className="text-xs text-[var(--muted-foreground)] mt-2">
+                    Curate films to watch later
+                  </p>
+                </div>
+                <div className="p-3 rounded-lg bg-[var(--primary)]/15">
+                  <Plus className="h-6 w-6 text-[var(--primary)]" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="overflow-hidden border-[var(--border)] hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-[var(--card)] to-[var(--card)]/60">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-semibold text-sm text-[var(--muted-foreground)] uppercase tracking-wide">
+                    Favorites
+                  </h3>
+                  <p className="text-4xl font-bold mt-3 text-[var(--foreground)]">0</p>
+                  <p className="text-xs text-[var(--muted-foreground)] mt-2">
+                    Your personal top picks
+                  </p>
+                </div>
+                <div className="p-3 rounded-lg bg-[var(--primary)]/15">
+                  <Sparkles className="h-6 w-6 text-[var(--primary)]" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Favorite Genres Section */}
+        <div className="mt-12">
+          <div className="flex items-center gap-2 mb-6">
+            <h2 className="text-2xl font-bold text-[var(--foreground)]">
+              Discover Your Taste
+            </h2>
+            <Zap className="h-5 w-5 text-[var(--primary)]" />
+          </div>
+          <Card className="border-[var(--border)] overflow-hidden hover:shadow-lg transition-shadow">
+            <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary)]/5 to-transparent pointer-events-none"></div>
+            <CardContent className="p-8 md:p-12 flex flex-col items-center justify-center text-center relative">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/5 flex items-center justify-center mb-6 border border-[var(--primary)]/20">
+                <Popcorn className="h-10 w-10 text-[var(--primary)]" />
+              </div>
+              <h3 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+                Let's Find Your Vibe
               </h3>
-              <p className="text-gray-400 mt-2 max-w-md">
-                Hey {userName?.split(" ")[0]}, let's find some movies that match
-                your taste!
+              <p className="text-[var(--muted-foreground)] max-w-2xl mb-6 leading-relaxed">
+                Hey {userName?.split(" ")[0]}, explore genres and let us learn your unique movie taste. The more you watch, the better our recommendations!
               </p>
               <Button
-                className="mt-4 bg-purple-700 hover:bg-purple-600"
+                className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-semibold"
+                size="lg"
                 onClick={handleExploreGenres}
               >
-                <Search className="h-4 w-4 mr-2" /> Explore Genres
+                <Search className="h-5 w-5 mr-2" /> Explore Genres
               </Button>
             </CardContent>
           </Card>
         </div>
 
-        <div className="mt-10 mb-20">
+        {/* Activity Tabs */}
+        <div className="mt-12 mb-20">
+          <div className="flex items-center gap-2 mb-6">
+            <h2 className="text-2xl font-bold text-[var(--foreground)]">
+              Your Activity
+            </h2>
+            <Film className="h-5 w-5 text-[var(--primary)]" />
+          </div>
           <Tabs defaultValue="recently-watched" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-gray-800">
+            <TabsList className="grid w-full grid-cols-2 bg-[var(--card)]/40 p-1 rounded-lg border border-[var(--border)]">
               <TabsTrigger
                 value="recently-watched"
-                className="data-[state=active]:bg-gray-700"
+                className="data-[state=active]:bg-[var(--card)] data-[state=active]:text-[var(--foreground)] data-[state=active]:shadow-md transition-all text-[var(--muted-foreground)]"
               >
                 Recently Watched
               </TabsTrigger>
               <TabsTrigger
                 value="recommendations"
-                className="data-[state=active]:bg-gray-700"
+                className="data-[state=active]:bg-[var(--card)] data-[state=active]:text-[var(--foreground)] data-[state=active]:shadow-md transition-all text-[var(--muted-foreground)]"
               >
                 Recommendations
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="recently-watched" className="mt-6">
-              <Card className="border-none bg-gray-800/50">
-                <CardContent className="p-8 flex flex-col items-center justify-center text-center">
-                  <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center mb-4">
-                    <Play className="h-10 w-10 text-purple-400" />
+              <Card className="border-[var(--border)] overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary)]/5 to-transparent pointer-events-none"></div>
+                <CardContent className="p-8 md:p-12 flex flex-col items-center justify-center text-center relative">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/5 flex items-center justify-center mb-6 border border-[var(--primary)]/20">
+                    <Play className="h-12 w-12 text-[var(--primary)]" />
                   </div>
-                  <h3 className="text-xl font-medium text-white">
-                    Ready to Start, {userName?.split(" ")[0]}?
+                  <h3 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+                    Ready to Start Your Journey?
                   </h3>
-                  <p className="text-gray-400 mt-2 max-w-md">
-                    Your movie journey begins here. Start watching to build your
-                    personal collection.
+                  <p className="text-[var(--muted-foreground)] max-w-2xl mb-8 leading-relaxed">
+                    Start watching movies and we'll track your viewing history. Your recently watched films will appear here as you explore the platform.
                   </p>
                   <Button
-                    className="mt-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-none"
+                    className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-semibold"
+                    size="lg"
                     onClick={handleExploreGenres}
                   >
-                    Discover Movies
+                    <Sparkles className="h-5 w-5 mr-2" /> Discover Movies Now
                   </Button>
                 </CardContent>
               </Card>
             </TabsContent>
 
             <TabsContent value="recommendations" className="mt-6">
-              <Card className="border-none bg-gray-800/50">
-                <CardContent className="p-8 flex flex-col items-center justify-center text-center">
-                  <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center mb-4">
-                    <Sparkles className="h-10 w-10 text-blue-400" />
+              <Card className="border-[var(--border)] overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary)]/5 to-transparent pointer-events-none"></div>
+                <CardContent className="p-8 md:p-12 flex flex-col items-center justify-center text-center relative">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--primary)]/20 to-[var(--primary)]/5 flex items-center justify-center mb-6 border border-[var(--primary)]/20">
+                    <Sparkles className="h-12 w-12 text-[var(--primary)]" />
                   </div>
-                  <h3 className="text-xl font-medium text-white">
-                    Personalized Just for You
+                  <h3 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+                    Personalized Just For You
                   </h3>
-                  <p className="text-gray-400 mt-2 max-w-md">
-                    Hi {userName?.split(" ")[0]}! Watch movies to help us
-                    understand your taste. We'll use that to recommend films
-                    you'll love.
+                  <p className="text-[var(--muted-foreground)] max-w-2xl mb-8 leading-relaxed">
+                    Watch movies and help us understand your unique taste. Based on your viewing history, we'll curate perfect recommendations tailored to your preferences.
                   </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 w-full">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 w-full max-w-2xl">
                     {[1, 2, 3, 4].map((i) => (
                       <div
                         key={i}
-                        className="aspect-[2/3] rounded-lg bg-gray-700/50 hover:bg-gray-700 transition-colors flex items-center justify-center group cursor-pointer overflow-hidden relative"
+                        className="aspect-[2/3] rounded-xl bg-gradient-to-br from-[var(--card)] to-[var(--card)]/60 hover:from-[var(--primary)]/20 hover:to-[var(--primary)]/5 transition-all duration-300 flex items-center justify-center group cursor-pointer overflow-hidden border border-[var(--border)]"
                       >
-                        <div className="absolute inset-0 bg-gradient-to-t from-purple-900/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-                          <span className="text-white text-sm">Discover</span>
-                        </div>
-                        <Film className="h-8 w-8 text-gray-600 group-hover:text-gray-500 transition-colors" />
+                        <Film className="h-8 w-8 text-[var(--muted-foreground)] group-hover:text-[var(--primary)] transition-colors" />
                       </div>
                     ))}
                   </div>
                   <Button
-                    className="mt-6 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 border-none"
+                    className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-semibold"
+                    size="lg"
                     onClick={handlePopMovies}
                   >
-                    Browse Popular Movies
+                    <Film className="h-5 w-5 mr-2" /> Browse Popular Movies
                   </Button>
                 </CardContent>
               </Card>

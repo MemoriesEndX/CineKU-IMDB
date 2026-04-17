@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeInitializer } from "@/components/theme-initializer";
 import { Sidebar } from "@/components/sidebar";
 import { SearchCommand } from "@/components/search-command";
 import { AuthProvider } from "@/components/auth-provider";
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-theme="midnight">
       <head>
         <script
           type="text/javascript"
@@ -35,29 +35,24 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.className} bg-gradient-to-br from-gray-900 to-black text-white`}
+        className={`${inter.className} bg-background text-foreground transition-colors duration-300`}
       >
+        <ThemeInitializer />
         <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem={false}
-          >
-            <div className="flex h-screen overflow-hidden">
-              <Sidebar />
-              <main className="flex-1 overflow-auto">
-                <header className="sticky top-0 z-10 backdrop-blur-md bg-black/30 border-b border-gray-800">
-                  <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-                    <SearchCommand />
-                    <UserButton />
-                  </div>
-                </header>
-                <div className="container mx-auto px-4 py-8">{children}</div>
-              </main>
-            </div>
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <main className="flex-1 overflow-auto">
+              <header className="sticky top-0 z-10 border-b border-border bg-background/50 blur-container">
+                <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                  <SearchCommand />
+                  <UserButton />
+                </div>
+              </header>
+              <div className="container mx-auto px-4 py-8">{children}</div>
+            </main>
+          </div>
 
-            <Analytics />
-          </ThemeProvider>
+          <Analytics />
         </AuthProvider>
       </body>
     </html>

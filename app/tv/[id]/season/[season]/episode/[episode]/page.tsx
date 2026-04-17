@@ -22,12 +22,12 @@ export default async function EpisodePage({
   );
 
   return (
-    <div className="min-h-screen bg-black/90">
-      <div className="fixed top-0 left-0 w-full z-50 bg-gradient-to-b from-black to-transparent">
+    <div className="min-h-screen bg-[var(--background)]">
+      <div className="fixed top-0 left-0 w-full z-50 bg-gradient-to-b from-[var(--background)] to-transparent">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <Link
             href={`/tv/${params.id}/season/${params.season}`}
-            className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors group"
+            className="inline-flex items-center gap-2 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors group"
           >
             <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
             Back to Season {params.season}
@@ -39,26 +39,26 @@ export default async function EpisodePage({
         <div className="space-y-8">
           <div className="space-y-4">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+              <h1 className="text-2xl md:text-3xl font-bold text-[var(--foreground)] mb-2">
                 {episode.name}
               </h1>
               <div className="flex flex-wrap gap-2 mb-4">
                 <Chip
                   variant="flat"
                   classNames={{
-                    base: "bg-default-100",
-                    content: "text-default-600 font-medium",
+                    base: "bg-[var(--card)]",
+                    content: "text-[var(--foreground)] font-medium",
                   }}
                 >
                   S{params.season} E{params.episode}
                 </Chip>
                 {episode.runtime && (
                   <Chip
-                    startContent={<FaClock className="text-default-500" />}
+                    startContent={<FaClock className="text-[var(--muted-foreground)]" />}
                     variant="flat"
                     classNames={{
-                      base: "bg-default-100",
-                      content: "text-default-600",
+                      base: "bg-[var(--card)]",
+                      content: "text-[var(--foreground)]",
                     }}
                   >
                     {episode.runtime} min
@@ -66,30 +66,30 @@ export default async function EpisodePage({
                 )}
                 {episode.air_date && (
                   <Chip
-                    startContent={<FaCalendar className="text-default-500" />}
+                    startContent={<FaCalendar className="text-[var(--muted-foreground)]" />}
                     variant="flat"
                     classNames={{
-                      base: "bg-default-100",
-                      content: "text-default-600",
+                      base: "bg-[var(--card)]",
+                      content: "text-[var(--foreground)]",
                     }}
                   >
                     {episode.air_date}
                   </Chip>
                 )}
               </div>
-              <h2 className="text-xl md:text-2xl font-semibold text-warning mb-2">
+              <h2 className="text-xl md:text-2xl font-semibold text-[var(--primary)] mb-2">
                 {tvShow.name}
               </h2>
             </div>
 
             {episode.overview && (
-              <Card className="bg-default-100/50 p-4">
-                <p className="text-white/90">{episode.overview}</p>
+              <Card className="bg-[var(--card)] p-4 border border-[var(--border)]">
+                <p className="text-[var(--foreground)]">{episode.overview}</p>
               </Card>
             )}
           </div>
 
-          <Card className="bg-default-100/50">
+          <Card className="bg-[var(--card)] border border-[var(--border)]">
             <EpisodePlayer tvShow={tvShow} episode={episode} />
           </Card>
 
@@ -103,7 +103,7 @@ export default async function EpisodePage({
                 <Button
                   variant="flat"
                   startContent={<FaArrowLeft />}
-                  className="bg-default-100/50 text-white"
+                  className="bg-[var(--card)] text-[var(--foreground)] border border-[var(--border)]"
                 >
                   Previous Episode
                 </Button>
@@ -118,7 +118,7 @@ export default async function EpisodePage({
               <Button
                 variant="flat"
                 endContent={<FaArrowRight />}
-                className="bg-default-100/50 text-white"
+                className="bg-[var(--card)] text-[var(--foreground)] border border-[var(--border)]"
               >
                 Next Episode
               </Button>
