@@ -31,12 +31,12 @@ const routes: RouteItem[] = [
     href: "/",
     match: (pathname) => pathname === "/",
   },
-  {
-    label: "Discover",
-    icon: Compass,
-    href: "/discover",
-    match: (pathname) => pathname === "/discover" || pathname.startsWith("/discover/"),
-  },
+  // {
+  //   label: "Discover",
+  //   icon: Compass,
+  //   href: "/discover",
+  //   match: (pathname) => pathname === "/discover" || pathname.startsWith("/discover/"),
+  // },
   {
     label: "Movies",
     icon: Film,
